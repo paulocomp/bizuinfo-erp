@@ -9,3 +9,13 @@ body {
     margin-top: 20px;
     padding: 20px;
 }
+
+.barra-pesquisa {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.barra-pesquisa input {
+    width: 600px !important;
+}

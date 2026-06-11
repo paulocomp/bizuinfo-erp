@@ -1,4 +1,4 @@
-package com.bizuinfo.acesso.bean;
+package com.bizuinfo.auditoria.bean;
 
 import com.bizuinfo.usuario.dao.LogAuditoriaDAO;
 import com.bizuinfo.usuario.model.LogAuditoria;

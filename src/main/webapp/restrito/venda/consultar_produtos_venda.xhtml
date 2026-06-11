@@ -26,7 +26,7 @@
                     ? '/restrito/dashboard/dashboard_gerente'
                     : '/restrito/dashboard/dashboard_funcionario'}"/>
 
-            <div class="spacer"></div>
+            <div class="spacer"> </div>
 
             <h:outputText value="Itens no carrinho: #{carrinhoBean.quantidadeItens}"/>
 
@@ -41,8 +41,19 @@
 
         <p:panel header="Gestão de Vendas - Produtos">
 
+            <div class="barra-pesquisa">
+                <p:inputText id="filtro"
+                             value="#{vendaBean.filtro}"
+                             placeholder="Pesquisar por produto ou categoria">
+                    <p:ajax event="keyup"
+                            listener="#{vendaBean.filtrar}"
+                            update="tabelaProdutos"/>
+                </p:inputText>
+            </div>
+
             <!-- PRODUTOS -->
-            <p:dataTable value="#{vendaBean.produtos}"
+            <p:dataTable id="tabelaProdutos"
+                         value="#{vendaBean.produtosFiltrados}"
                          var="p"
                          sortMode="multiple">
 

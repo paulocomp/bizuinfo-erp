@@ -26,9 +26,14 @@ public class VendaBean implements Serializable {
 
     private List<ProdutoVendaDTO> produtos;
 
+    private List<ProdutoVendaDTO> produtosFiltrados;
+
+    private String filtro;
+
     @PostConstruct
     public void init() {
         carregarProdutos();
+        produtosFiltrados = List.copyOf(produtos);
     }
 
     private void carregarProdutos() {
@@ -73,8 +78,57 @@ public class VendaBean implements Serializable {
         }
     }
 
+    public void filtrar() {
+
+        if (filtro == null || filtro.isBlank()) {
+
+            produtosFiltrados = List.copyOf(produtos);
+            return;
+        }
+
+        String termo = filtro.toLowerCase();
+
+        produtosFiltrados = produtos.stream()
+                .filter(dto -> {
+
+                    Produto p = dto.getProduto();
+
+                    boolean nomeMatch =
+                            p.getNome() != null
+                                    &&
+                                    p.getNome()
+                                            .toLowerCase()
+                                            .contains(termo);
+
+                    boolean categoriaMatch =
+                            p.getCategoria() != null
+                                    &&
+                                    p.getCategoria().getNome() != null
+                                    &&
+                                    p.getCategoria()
+                                            .getNome()
+                                            .toLowerCase()
+                                            .contains(termo);
+
+                    return nomeMatch || categoriaMatch;
+                })
+                .toList();
+    }
+
     public List<ProdutoVendaDTO> getProdutos() {
         return produtos;
+    }
+
+    public List<ProdutoVendaDTO> getProdutosFiltrados() {
+        return produtosFiltrados;
+    }
+
+    public String getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(String filtro) {
+        this.filtro = filtro;
     }
 
 }

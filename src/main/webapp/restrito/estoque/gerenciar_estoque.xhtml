@@ -6,14 +6,14 @@
 
 <h:head>
     <title>Gerenciar Produtos - BizuInfo ERP</title>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <h:outputStylesheet library="css" name="global.css"/>
     <h:outputStylesheet library="css" name="produto.css"/>
 </h:head>
 
 <h:body>
     <h:form id="formProdutos">
-        <p:growl id="growl" showDetail="true" />
+        <p:growl id="growl" showDetail="true"/>
 
 
         <div class="topbar">
@@ -23,8 +23,6 @@
 
 
             <p:menuButton value="Produtos" icon="pi pi-box">
-                <p:menuitem value="Consultar Estoque"
-                            outcome="/restrito/estoque/consultar_estoque.xhtml"/>
                 <p:menuitem value="Gerenciar Categorias"
                             outcome="/restrito/produto/gerenciar_categorias.xhtml"/>
                 <p:menuitem value="Gerenciar Estoque"
@@ -44,7 +42,7 @@
 
             </p:menuButton>
 
-            <div class="spacer"> </div>
+            <div class="spacer"></div>
 
             <p:menuButton icon="pi pi-user" style="margin-left:auto">
                 <p:menuitem value="Meu Perfil"
@@ -57,20 +55,34 @@
 
         <p:panel header="Gestão de Estoque">
             <div class="container-tabela">
-                <p:dataTable value="#{estoqueBean.produtos}" var="p"
+                <div class="barra-pesquisa">
+                    <p:inputText id="filtro"
+                                 value="#{estoqueBean.filtro}"
+                                 placeholder="Pesquisar por produto ou categoria">
+
+                        <p:ajax event="keyup"
+                                listener="#{estoqueBean.filtrar}"
+                                update="tabelaProdutos"/>
+
+                    </p:inputText>
+                </div>
+
+                <p:dataTable id="tabelaProdutos"
+                             value="#{estoqueBean.produtosFiltrados}" var="p"
                              emptyMessage="Nenhum produto encontrado. Verifique se o banco foi populado."
                              styleClass="p-mt-2">
 
                     <p:column headerText="ID" width="50" style="text-align: center;">
-                        <h:outputText value="#{p.id}" />
+                        <h:outputText value="#{p.id}"/>
                     </p:column>
 
                     <p:column headerText="Produto">
-                        <h:outputText value="#{p.nome}" />
+                        <h:outputText value="#{p.nome}"/>
                     </p:column>
 
                     <p:column headerText="Categoria" style="text-align: center;">
-                        <h:outputText value="#{p.categoria.nome}" />
+                        <h:outputText
+                                value="#{empty p.categoria or empty p.categoria.nome ? 'Sem Categoria' : p.categoria.nome}"/>
                     </p:column>
 
                     <p:column headerText="Estoque Atual" style="text-align: center;">
@@ -79,14 +91,14 @@
                     </p:column>
 
                     <p:column headerText="Estoque Mínimo" width="150" style="text-align: center;">
-                        <h:outputText value="#{p.estoqueMinimo}" />
+                        <h:outputText value="#{p.estoqueMinimo}"/>
                     </p:column>
 
                     <p:column headerText="Ações" width="150" style="text-align: center;">
                         <p:commandButton icon="pi pi-box" value="Movimentar"
                                          action="#{estoqueBean.prepararMovimentacao(p)}"
                                          update=":formDialogoMovimentacao"
-                                         oncomplete="PF('dlgMovimentacao').show()" />
+                                         oncomplete="PF('dlgMovimentacao').show()"/>
                     </p:column>
                 </p:dataTable>
             </div>
@@ -97,17 +109,17 @@
         <h:form id="formDialogoMovimentacao">
             <h:panelGrid columns="2" cellpadding="10">
                 <h:outputText value="Produto Selecionado:" style="font-weight: bold;"/>
-                <h:outputText value="#{estoqueBean.produtoSelecionado.nome}" />
+                <h:outputText value="#{empty estoqueBean.produtoSelecionado ? '' : estoqueBean.produtoSelecionado.nome}"/>
 
-                <h:outputText value="Quantidade (Valores negativos para saídas):" />
-                <p:spinner value="#{estoqueBean.quantidadeMovimentacao}" />
+                <h:outputText value="Quantidade (Valores negativos para saídas):"/>
+                <p:spinner value="#{estoqueBean.quantidadeMovimentacao}"/>
             </h:panelGrid>
             <p:divider/>
             <div style="text-align: right; margin-top: 10px;">
                 <p:commandButton value="Confirmar" icon="pi pi-check"
                                  action="#{estoqueBean.salvarMovimentacao}"
                                  update=":formProdutos :formProdutos:growl"
-                                 oncomplete="PF('dlgMovimentacao').hide()" />
+                                 oncomplete="PF('dlgMovimentacao').hide()"/>
             </div>
         </h:form>
     </p:dialog>
