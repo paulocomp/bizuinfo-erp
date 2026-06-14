@@ -4,7 +4,7 @@ import com.bizuinfo.acesso.dto.LoginResultado;
 import com.bizuinfo.acesso.model.ResultadoLogin;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.usuario.service.LogAuditoriaService;
+import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import org.mindrot.jbcrypt.BCrypt;

@@ -1,7 +1,7 @@
-package com.bizuinfo.usuario.dao;
+package com.bizuinfo.auditoria.dao;
 
 import com.bizuinfo.infra.util.JPAutil;
-import com.bizuinfo.usuario.model.LogAuditoria;
+import com.bizuinfo.auditoria.model.LogAuditoria;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 

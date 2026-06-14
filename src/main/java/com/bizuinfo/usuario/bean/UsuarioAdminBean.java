@@ -4,7 +4,7 @@ import com.bizuinfo.acesso.bean.LoginBean;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Role;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.usuario.service.LogAuditoriaService;
+import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.faces.application.FacesMessage;

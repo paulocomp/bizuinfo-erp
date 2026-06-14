@@ -4,7 +4,7 @@ import com.bizuinfo.infra.service.EmailService;
 import com.bizuinfo.produto.dao.ProdutoDAO;
 import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.usuario.service.LogAuditoriaService;
+import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;

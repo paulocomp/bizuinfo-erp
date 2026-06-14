@@ -1,7 +1,7 @@
 package com.bizuinfo.auditoria.bean;
 
-import com.bizuinfo.usuario.dao.LogAuditoriaDAO;
-import com.bizuinfo.usuario.model.LogAuditoria;
+import com.bizuinfo.auditoria.dao.LogAuditoriaDAO;
+import com.bizuinfo.auditoria.model.LogAuditoria;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;

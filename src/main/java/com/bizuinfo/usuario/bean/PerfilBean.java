@@ -3,7 +3,7 @@ package com.bizuinfo.usuario.bean;
 import com.bizuinfo.acesso.bean.LoginBean;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.usuario.service.LogAuditoriaService;
+import com.bizuinfo.auditoria.service.LogAuditoriaService;
 
 import com.bizuinfo.web.Paginas;
 import jakarta.annotation.PostConstruct;

@@ -3,7 +3,7 @@ package com.bizuinfo.acesso.bean;
 import com.bizuinfo.acesso.dto.LoginResultado;
 import com.bizuinfo.acesso.service.LoginService;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.usuario.service.LogAuditoriaService;
+import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import com.bizuinfo.web.Paginas;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
