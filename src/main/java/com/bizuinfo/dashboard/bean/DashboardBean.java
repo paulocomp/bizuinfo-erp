@@ -9,17 +9,14 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-
 import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.pie.PieChartModel;
-import org.primefaces.model.charts.bar.BarChartModel;
 import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.bar.BarChartModel;
+import org.primefaces.model.charts.pie.PieChartModel;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
@@ -136,6 +133,10 @@ public class DashboardBean implements Serializable {
 
         for (Venda v : vendas) {
 
+            if (v.getPagamento() == null) {
+                continue;
+            }
+
             String forma = v.getPagamento().getFormaPagamento().name();
 
             map.put(forma,
@@ -167,8 +168,6 @@ public class DashboardBean implements Serializable {
 
         pagamentoChart = new PieChartModel();
         pagamentoChart.setData(data);
-
-
     }
 
     // GETTERS

@@ -30,35 +30,52 @@
                       icon="pi pi-book"
                       outcome="/restrito/auditoria/logs.xhtml"/>
 
-            <p:menuButton value="Produtos" icon="pi pi-box">
-            <p:menuitem value="Consultar Estoque"
-                        outcome="/restrito/estoque/consultar_estoque.xhtml"/>
-
             <p:menuButton value="Produtos"
                           icon="pi pi-box">
 
                 <p:menuitem value="Gerenciar Categorias"
                             outcome="/restrito/produto/gerenciar_categorias.xhtml"/>
+
                 <p:menuitem value="Gerenciar Estoque"
                             outcome="/restrito/estoque/gerenciar_estoque.xhtml"/>
+
             </p:menuButton>
 
-            <p:menuButton value="Vendas" icon="pi pi-shopping-cart">
+            <p:menuButton value="Vendas"
+                          icon="pi pi-shopping-cart">
+
                 <p:menuitem value="Nova Venda"
                             icon="pi pi-plus"
                             outcome="/restrito/venda/consultar_produtos_venda.xhtml"/>
+
                 <p:menuitem value="Minhas Vendas"
                             icon="pi pi-list"
                             outcome="/restrito/venda/minhas_vendas.xhtml"/>
+
+
             </p:menuButton>
 
-            <div class="spacer"></div>
+            <p:menuButton value="Fornecedores"
+                          icon="pi pi-truck">
+                <p:menuitem value="Simulação de Compras"
+                            outcome="/restrito/venda/simulacao_compras.xhtml"/>
+                <p:menuitem value="Gerenciar Fornecedores"
+                            outcome="/restrito/produto/gerenciar_fornecedores.xhtml"/>
+
+
+            </p:menuButton>
+
+            <div class="spacer"> </div>
 
             <p:menuButton icon="pi pi-user">
+
                 <p:menuitem value="Meu Perfil"
                             outcome="/restrito/usuario/perfil_usuario.xhtml"/>
+
                 <p:menuitem value="Sair"
+                            icon="pi pi-sign-out"
                             action="#{loginBean.sair}"/>
+
             </p:menuButton>
 
         </div>

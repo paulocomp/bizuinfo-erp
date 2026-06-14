@@ -3,6 +3,7 @@ package com.bizuinfo.produto.bean;
 import com.bizuinfo.produto.dao.CategoriaDAO;
 import com.bizuinfo.produto.model.Categoria;
 import com.bizuinfo.produto.service.CategoriaService;
+import com.bizuinfo.venda.dto.SugestaoCompraDTO;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.faces.application.FacesMessage;
@@ -11,12 +12,16 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
 @Named
 @ViewScoped
 public class CategoriaBean implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Inject
     private CategoriaDAO categoriaDAO;

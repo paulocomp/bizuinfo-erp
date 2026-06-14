@@ -3,8 +3,16 @@ package com.bizuinfo.produto.service;
 import com.bizuinfo.produto.dao.CategoriaDAO;
 import com.bizuinfo.produto.dao.ProdutoDAO;
 import com.bizuinfo.produto.model.Categoria;
+import com.bizuinfo.produto.model.Produto;
+import com.bizuinfo.venda.dto.SugestaoCompraDTO;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Stateless
 public class CategoriaService {
@@ -41,4 +49,5 @@ public class CategoriaService {
         categoria.setNome(nome.trim());
         categoriaDAO.salvar(categoria);
     }
+
 }

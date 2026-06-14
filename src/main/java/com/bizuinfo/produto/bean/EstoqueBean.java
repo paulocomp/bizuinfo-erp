@@ -13,6 +13,7 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import java.util.List;
 @ViewScoped
 public class EstoqueBean implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Inject
@@ -98,6 +100,37 @@ public class EstoqueBean implements Serializable {
         );
     }
 
+    public void excluirProduto(Produto produto) {
+
+        try {
+
+            produtoDAO.remover(produto.getId());
+
+            carregarProdutos();
+            filtrar();
+
+            FacesContext.getCurrentInstance().addMessage(
+                    null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_INFO,
+                            "Sucesso",
+                            "Produto removido com sucesso."
+                    )
+            );
+
+        } catch (Exception e) {
+
+            FacesContext.getCurrentInstance().addMessage(
+                    null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_ERROR,
+                            "Erro",
+                            "Não foi possível remover o produto."
+                    )
+            );
+        }
+    }
+
     // Getters e Setters
     public List<Produto> getProdutos() {
         return produtos;
@@ -134,4 +167,5 @@ public class EstoqueBean implements Serializable {
     public void setFiltro(String filtro) {
         this.filtro = filtro;
     }
+
 }

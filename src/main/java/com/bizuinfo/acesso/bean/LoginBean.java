@@ -25,8 +25,6 @@ public class LoginBean implements Serializable {
     private String email;
     private String senha;
 
-    private Usuario usuarioLogado;
-
     @EJB
     private LoginService loginService;
 
@@ -60,14 +58,12 @@ public class LoginBean implements Serializable {
 
                 Usuario usuario = resultado.getUsuario();
 
-                usuarioLogado = usuario;
-
                 FacesContext.getCurrentInstance()
                         .getExternalContext()
                         .getSessionMap()
                         .put("usuario", usuario);
 
-                return switch (usuarioLogado.getRole()) {
+                return switch (usuario.getRole()) {
 
                     case ADMIN -> Paginas.DASHBOARD_ADMIN
                             + "?faces-redirect=true";
@@ -92,7 +88,7 @@ public class LoginBean implements Serializable {
 
     public String sair() {
 
-        Usuario usuario = usuarioLogado;
+        Usuario usuario = getUsuarioLogado();
 
         if (usuario != null) {
 
@@ -103,7 +99,7 @@ public class LoginBean implements Serializable {
             );
         }
 
-        usuarioLogado = null;
+        usuario = null;
         sessaoBean.logout();
 
         FacesContext.getCurrentInstance()
@@ -113,8 +109,9 @@ public class LoginBean implements Serializable {
         return Paginas.LOGIN + "?faces-redirect=true";
     }
 
+
     public boolean logado() {
-        return usuarioLogado != null;
+        return getUsuarioLogado() != null;
     }
 
     public String getEmail() {
@@ -126,7 +123,17 @@ public class LoginBean implements Serializable {
     }
 
     public Usuario getUsuarioLogado() {
-        return usuarioLogado;
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        if (context == null) {
+            return null;
+        }
+
+        return (Usuario) context
+                .getExternalContext()
+                .getSessionMap()
+                .get("usuario");
     }
 
     public void setEmail(String email) {

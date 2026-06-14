@@ -26,8 +26,9 @@ public class Produto {
     @Column(name = "descricao")
     private String descricao;
 
-    @Column(name = "fornecedor_idfornecedor")
-    private Long idFornecedor;
+    @ManyToOne
+    @JoinColumn(name = "fornecedor_idfornecedor")
+    private Fornecedor fornecedor;
 
     @ManyToOne
     @JoinColumn(name = "categoria_categoria_id")
@@ -43,9 +44,7 @@ public class Produto {
     }
 
     public String getNome() {
-        return (nome != null) ?
-                nome :
-                "Sem Categoria";
+        return nome;
     }
 
     public void setNome(String nome) {
@@ -84,18 +83,12 @@ public class Produto {
         this.descricao = descricao;
     }
 
-    public Long getIdFornecedor() {
-        return idFornecedor;
-    }
-
-    public void setIdFornecedor(Long idFornecedor) {
-        this.idFornecedor = idFornecedor;
-    }
+    public Fornecedor getFornecedor() {return fornecedor;}
+    public void setFornecedor(Fornecedor fornecedor) {this.fornecedor = fornecedor;}
 
     public Categoria getCategoria() {
         return categoria;
     }
-
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }

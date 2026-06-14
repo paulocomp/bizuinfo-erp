@@ -15,6 +15,21 @@
     <h:form id="formProdutos">
         <p:growl id="growl" showDetail="true"/>
 
+        <p:confirmDialog global="true"
+                         showEffect="fade"
+                         hideEffect="fade">
+
+            <p:commandButton value="Sim"
+                             type="button"
+                             styleClass="ui-confirmdialog-yes"
+                             icon="pi pi-check"/>
+
+            <p:commandButton value="Não"
+                             type="button"
+                             styleClass="ui-confirmdialog-no"
+                             icon="pi pi-times"/>
+
+        </p:confirmDialog>
 
         <div class="topbar">
             <p:button value="Dashboard"
@@ -67,6 +82,13 @@
                     </p:inputText>
                 </div>
 
+                <p:commandButton value="Adicionar Produto"
+                                 icon="pi pi-plus"
+                                 type="button"
+                                 onclick="PF('dlgNovoProduto').show()"/>
+
+                <br/><br/>
+
                 <p:dataTable id="tabelaProdutos"
                              value="#{estoqueBean.produtosFiltrados}" var="p"
                              emptyMessage="Nenhum produto encontrado. Verifique se o banco foi populado."
@@ -95,10 +117,24 @@
                     </p:column>
 
                     <p:column headerText="Ações" width="150" style="text-align: center;">
-                        <p:commandButton icon="pi pi-box" value="Movimentar"
+                        <p:commandButton icon="pi pi-box"
+                                         value="Movimentar"
+                                         style="width: 150px;"
                                          action="#{estoqueBean.prepararMovimentacao(p)}"
                                          update=":formDialogoMovimentacao"
                                          oncomplete="PF('dlgMovimentacao').show()"/>
+
+                        <p:commandButton icon="pi pi-trash"
+                                         value="Excluir"
+                                         style="width: 150px; background:#e57373; border-color:#e57373;"
+                                         action="#{estoqueBean.excluirProduto(p)}"
+                                         update=":formProdutos:tabelaProdutos :formProdutos:growl">
+
+                            <p:confirm header="Confirmação"
+                                       message="Deseja excluir o produto #{p.nome}?"
+                                       icon="pi pi-exclamation-triangle"/>
+
+                        </p:commandButton>
                     </p:column>
                 </p:dataTable>
             </div>
@@ -109,7 +145,8 @@
         <h:form id="formDialogoMovimentacao">
             <h:panelGrid columns="2" cellpadding="10">
                 <h:outputText value="Produto Selecionado:" style="font-weight: bold;"/>
-                <h:outputText value="#{empty estoqueBean.produtoSelecionado ? '' : estoqueBean.produtoSelecionado.nome}"/>
+                <h:outputText
+                        value="#{empty estoqueBean.produtoSelecionado ? '' : estoqueBean.produtoSelecionado.nome}"/>
 
                 <h:outputText value="Quantidade (Valores negativos para saídas):"/>
                 <p:spinner value="#{estoqueBean.quantidadeMovimentacao}"/>
@@ -123,5 +160,71 @@
             </div>
         </h:form>
     </p:dialog>
+
+    <p:dialog header="Novo Produto"
+              widgetVar="dlgNovoProduto"
+              modal="true"
+              resizable="false">
+
+        <h:form id="formNovoProduto">
+
+            <h:panelGrid columns="2"
+                         cellpadding="10">
+
+                <h:outputText value="Nome do Produto"/>
+                <p:inputText value="#{produtoBean.produto.nome}"
+                             placeholder="Nome do Produto"/>
+
+                <h:outputText value="Preço"/>
+                <p:inputNumber value="#{produtoBean.produto.preco}"
+                               decimalPlaces="2"
+                               symbol="R$ "
+                               symbolPosition="p"/>
+
+                <h:outputText value="Categoria"/>
+                <p:selectOneMenu value="#{produtoBean.produto.categoria}"
+                                 converter="categoriaConverter">
+                    <f:selectItems value="#{categoriaBean.categorias}"
+                                   var="c"
+                                   itemLabel="#{c.nome}"
+                                   itemValue="#{c}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="Fornecedor" />
+                <p:selectOneMenu value="#{produtoBean.produto.fornecedor}"
+                                 converter="fornecedorConverter">
+                    <f:selectItems value="#{fornecedorBean.fornecedores}"
+                                   var="f"
+                                   itemLabel="#{f.nome}"
+                                   itemValue="#{f}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Estoque Mínimo"/>
+                <p:spinner value="#{produtoBean.produto.estoqueMinimo}"
+                           min="0"
+                           stepFactor="1"/>
+
+                <h:outputText value="Estoque"/>
+                <p:spinner value="#{produtoBean.produto.estoqueAtual}"
+                           min="0"
+                           stepFactor="1"/>
+
+            </h:panelGrid>
+
+            <p:divider/>
+
+            <div style="text-align:right">
+
+                <p:commandButton value="Salvar"
+                                 action="#{produtoBean.salvar}"
+                                 update=":formProdutos:tabelaProdutos :formProdutos:growl formNovoProduto"
+                                 oncomplete="if (!args.validationFailed) PF('dlgNovoProduto').hide();" />
+
+            </div>
+
+        </h:form>
+
+    </p:dialog>
+
 </h:body>
 </html>

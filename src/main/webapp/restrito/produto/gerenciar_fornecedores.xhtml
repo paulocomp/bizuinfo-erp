@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <title>Gestão de Fornecedores - BizuInfo ERP</title>
+    <style>
+        html, body { margin: 0; padding: 0; background-color: #f4f4f9; font-family: Arial, sans-serif; }
+        .topbar { flex: 0 0 auto; position: sticky; top: 0; z-index: 1000; background: #ffffff; padding: 12px; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 10px; }
+        .spacer { flex: 1; }
+        .container-conteudo { padding: 20px; }
+    </style>
+</h:head>
+
+<h:body>
+    <h:form id="formFornecedores">
+        <p:growl id="growl" showDetail="true" />
+
+        <div class="topbar">
+            <p:button value="Voltar ao Dashboard" icon="pi pi-home" outcome="/restrito/dashboard/dashboard_admin.xhtml"/>
+
+            <p:menuButton value="Compras e Fornecedores" icon="pi pi-shopping-cart">
+                <p:menuitem value="Fornecedores" outcome="/restrito/produto/gerenciar_fornecedores.xhtml"/>
+                <p:menuitem value="Simulação de Compras" outcome="/restrito/venda/simulacao_compras.xhtml"/>
+            </p:menuButton>
+
+            <div class="spacer"></div>
+            <p:menuButton icon="pi pi-user" style="margin-left:auto">
+                <p:menuitem value="Sair" icon="pi pi-sign-out" action="#{loginBean.sair}"/>
+            </p:menuButton>
+        </div>
+
+        <div class="container-conteudo">
+            <p:panel header="Fornecedores Registados">
+
+                <p:commandButton value="Novo Fornecedor" icon="pi pi-plus"
+                                 actionListener="#{fornecedorBean.prepararNovo}"
+                                 update=":formDialogoFornecedor"
+                                 oncomplete="PF('dlgFornecedor').show()"
+                                 styleClass="ui-button-success" style="margin-bottom: 15px;" />
+
+                <p:dataTable value="#{fornecedorBean.fornecedores}" var="f" emptyMessage="Nenhum fornecedor encontrado.">
+                    <p:column headerText="ID" width="50" style="text-align: center;"><h:outputText value="#{f.id}" /></p:column>
+                    <p:column headerText="Nome da Empresa"><h:outputText value="#{f.nome}" style="font-weight: bold;"/></p:column>
+                    <p:column headerText="CNPJ" width="180"><h:outputText value="#{f.cnpj}" /></p:column>
+                    <p:column headerText="Contacto (Email/Tel)">
+                        <h:outputText value="#{f.email}" /><br/>
+                        <h:outputText value="#{f.telefone}" style="font-size: 0.9em; color: gray;" />
+                    </p:column>
+
+                    <p:column headerText="Ações" width="120" style="text-align: center;">
+                        <p:commandButton icon="pi pi-pencil" styleClass="ui-button-warning ui-button-flat"
+                                         update=":formDialogoFornecedor" oncomplete="PF('dlgFornecedor').show()">
+                            <f:setPropertyActionListener value="#{f}" target="#{fornecedorBean.fornecedorSelecionado}" />
+                        </p:commandButton>
+
+                        <p:commandButton icon="pi pi-trash" styleClass="ui-button-danger ui-button-flat"
+                                         action="#{fornecedorBean.remover(f)}" update="@form">
+                            <p:confirm header="Confirmação" message="Deseja remover este fornecedor?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </div>
+
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+            <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times" />
+        </p:confirmDialog>
+    </h:form>
+
+    <p:dialog header="Dados do Fornecedor" widgetVar="dlgFornecedor" modal="true" resizable="false">
+        <h:form id="formDialogoFornecedor">
+            <h:panelGrid columns="2" cellpadding="7">
+                <p:outputLabel for="nome" value="Nome da Empresa:" />
+                <p:inputText id="nome" value="#{fornecedorBean.fornecedorSelecionado.nome}" required="true" size="40"/>
+
+                <p:outputLabel for="cnpj" value="CNPJ:" />
+                <p:inputMask id="cnpj" value="#{fornecedorBean.fornecedorSelecionado.cnpj}" mask="99.999.999/9999-99" size="40"/>
+
+                <p:outputLabel for="email" value="Email:" />
+                <p:inputText id="email" value="#{fornecedorBean.fornecedorSelecionado.email}" size="40"/>
+
+                <p:outputLabel for="telefone" value="Telefone:" />
+                <p:inputMask id="telefone" value="#{fornecedorBean.fornecedorSelecionado.telefone}" mask="(99) 99999-9999" size="40"/>
+            </h:panelGrid>
+            <p:divider/>
+            <div style="text-align: right;">
+                <p:commandButton value="Guardar" icon="pi pi-save" action="#{fornecedorBean.salvar}"
+                                 update=":formFornecedores :formFornecedores:growl"
+                                 oncomplete="if(!args.validationFailed) PF('dlgFornecedor').hide()" />
+            </div>
+        </h:form>
+    </p:dialog>
+</h:body>
+</html>

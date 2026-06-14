@@ -1,5 +1,6 @@
 package com.bizuinfo.venda.service;
 
+import com.bizuinfo.infra.service.EmailService;
 import com.bizuinfo.infra.util.JPAutil;
 import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.usuario.model.Usuario;
@@ -9,6 +10,7 @@ import com.bizuinfo.venda.model.Pagamento;
 import com.bizuinfo.venda.model.Venda;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
@@ -18,6 +20,11 @@ public class VendaService {
 
     @EJB
     private LogAuditoriaService logAuditoriaService;
+
+    @Inject
+    private EmailService emailService;
+
+    private static final String EMAIL_GERENCIA = "bizuinfo.contato@gmail.com";
 
     public Venda finalizarVenda(
             Venda venda,
@@ -49,41 +56,25 @@ public class VendaService {
                 );
 
                 if (produto == null) {
-                    throw new RuntimeException(
-                            "Produto não encontrado."
-                    );
+                    throw new RuntimeException("Produto não encontrado.");
                 }
 
-                if (produto.getEstoqueAtual()
-                        < item.getQuantidade()) {
-
-                    throw new RuntimeException(
-                            "Estoque insuficiente para: "
-                                    + produto.getNome()
-                    );
+                if (produto.getEstoqueAtual() < item.getQuantidade()) {
+                    throw new RuntimeException("Estoque insuficiente para: " + produto.getNome());
                 }
 
-                double subtotal =
-                        item.getQuantidade()
-                                * produto.getPreco();
+                double subtotal = item.getQuantidade() * produto.getPreco();
 
-                item.setValorUnitario(
-                        produto.getPreco()
-                );
-
-                item.setSubtotal(
-                        subtotal
-                );
+                item.setValorUnitario(produto.getPreco());
+                item.setSubtotal(subtotal);
 
                 valorTotal += subtotal;
 
-                produto.setEstoqueAtual(
-                        produto.getEstoqueAtual()
-                                - item.getQuantidade()
-                );
+                produto.setEstoqueAtual(produto.getEstoqueAtual() - item.getQuantidade());
+
+                verificarAlerta(produto);
 
                 em.merge(produto);
-
             }
 
             venda.setValorTotal(valorTotal);
@@ -99,21 +90,14 @@ public class VendaService {
             em.flush();
 
             for (ItemVenda item : itens) {
-
                 item.setVenda(venda);
-
                 em.merge(item);
             }
 
             pagamento.setVenda(venda);
-
             em.persist(pagamento);
 
             em.getTransaction().commit();
-
-            String emailUsuario = venda.getUsuario() != null
-                    ? venda.getUsuario().getEmail()
-                    : "DESCONHECIDO";
 
             logAuditoriaService.registrar(
                     "VENDA_FINALIZADA",
@@ -134,14 +118,32 @@ public class VendaService {
                 em.getTransaction().rollback();
             }
 
-            throw new RuntimeException(
-                    "Erro ao finalizar venda.",
-                    e
-            );
+            throw new RuntimeException("Erro ao finalizar venda.", e);
 
         } finally {
-
             em.close();
+        }
+    }
+
+    private void verificarAlerta(Produto produto) {
+        if (produto.getEstoqueAtual() <= produto.getEstoqueMinimo()) {
+            String assunto = "ALERTA ERP - Estoque Baixo: " + produto.getNome();
+            String mensagem = String.format(
+                    "<h3>Aviso de Estoque Mínimo Atingido</h3>" +
+                            "<p>O produto <b>%s</b> atingiu ou está abaixo do limite de segurança.</p>" +
+                            "<ul>" +
+                            "<li><b>Estoque Atual:</b> %d unidades</li>" +
+                            "<li><b>Estoque Mínimo:</b> %d unidades</li>" +
+                            "</ul>" +
+                            "<p>Por favor, providencie o reabastecimento junto ao fornecedor.</p>",
+                    produto.getNome(), produto.getEstoqueAtual(), produto.getEstoqueMinimo()
+            );
+
+            String[] emailsDestino = {EMAIL_GERENCIA, "miguel.rspp@gmail.com", "202320637511@uezo.edu.com"};
+
+            for (String email : emailsDestino) {
+                emailService.enviarEmail(email, assunto, mensagem);
+            }
         }
     }
 }

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <title>Simulação de Compras - BizuInfo ERP</title>
+    <style>
+        html, body { margin: 0; padding: 0; background-color: #f4f4f9; font-family: Arial, sans-serif; }
+        .topbar { flex: 0 0 auto; position: sticky; top: 0; z-index: 1000; background: #ffffff; padding: 12px; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 10px; }
+        .spacer { flex: 1; }
+        .container-conteudo { padding: 20px; }
+        .alerta-compra { background-color: #ffebee; padding: 15px; border-left: 5px solid #f44336; margin-bottom: 20px; }
+    </style>
+</h:head>
+
+<h:body>
+    <h:form id="formSimulacao">
+
+        <div class="topbar">
+            <p:button value="Voltar ao Dashboard" icon="pi pi-home" outcome="/restrito/dashboard/dashboard_admin.xhtml"/>
+
+            <p:menuButton value="Compras e Fornecedores" icon="pi pi-shopping-cart">
+                <p:menuitem value="Fornecedores" outcome="/restrito/produto/gerenciar_fornecedores.xhtml"/>
+                <p:menuitem value="Simulação de Compras" outcome="/restrito/venda/simulacao_compras.xhtml"/>
+            </p:menuButton>
+
+            <div class="spacer"></div>
+            <p:menuButton icon="pi pi-user" style="margin-left:auto">
+                <p:menuitem value="Sair" icon="pi pi-sign-out" action="#{loginBean.sair}"/>
+            </p:menuButton>
+        </div>
+
+        <div class="container-conteudo">
+            <div class="alerta-compra">
+                <h3 style="margin-top: 0; color: #d32f2f;"><i class="pi pi-info-circle"></i> Análise Inteligente de Reposição</h3>
+                <p style="margin-bottom: 0;">O sistema analisou a procura dos últimos 30 dias e cruzou com o seu stock atual e mínimo.
+                    Abaixo estão as sugestões automatizadas de encomenda para evitar a rutura de inventário.</p>
+            </div>
+
+            <p:panel header="Sugestões de Compra Geradas Automáticamente">
+
+                <p:commandButton value="Recalcular Análise" icon="pi pi-refresh"
+                                 action="#{compraAutomaticaBean.carregarSugestoes}"
+                                 update="@form" styleClass="ui-button-outlined" style="margin-bottom: 15px;" />
+
+                <p:dataTable value="#{compraAutomaticaBean.sugestoes}" var="s"
+                             emptyMessage="Ótimas notícias! O stock atual é suficiente para a procura projetada.">
+
+                    <p:column headerText="Produto">
+                        <h:outputText value="#{s.produto.nome}" style="font-weight: bold;"/>
+                    </p:column>
+
+                    <p:column headerText="Fornecedor Preferencial">
+                        <h:outputText value="Sem Fornecedor" rendered="#{s.produto.fornecedor == null}" />
+
+                        <h:outputText value="#{s.produto.fornecedor.nome}" rendered="#{s.produto.fornecedor != null}" />
+                    </p:column>
+
+                    <p:column headerText="Estoque Atual" style="text-align: center;">
+                        <h:outputText value="#{s.produto.estoqueAtual}" />
+                    </p:column>
+
+                    <p:column headerText="Procura (Últimos 30d)" style="text-align: center;">
+                        <h:outputText value="#{s.demandaUltimos30Dias}" style="color: #1976d2; font-weight: bold;" />
+                    </p:column>
+
+                    <p:column headerText="Stock Projetado" style="text-align: center;">
+                        <h:outputText value="#{s.estoqueProjetado}" style="color: #{s.estoqueProjetado lt 0 ? 'red' : 'inherit'};" />
+                    </p:column>
+
+                    <p:column headerText="Qtd. Sugerida para Encomenda" style="text-align: center; background-color: #f1f8e9;">
+                        <h:outputText value="#{s.quantidadeSugerida}" style="font-weight: bold; color: #2e7d32; font-size: 1.1em;" />
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </div>
+    </h:form>
+</h:body>
+</html>
