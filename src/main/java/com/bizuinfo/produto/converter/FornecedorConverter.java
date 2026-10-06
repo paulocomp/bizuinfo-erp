@@ -1,6 +1,6 @@
 package com.bizuinfo.produto.converter;
 
-import com.bizuinfo.produto.dao.FornecedorDAO;
+import com.bizuinfo.produto.service.FornecedorService;
 import com.bizuinfo.produto.model.Categoria;
 import com.bizuinfo.produto.model.Fornecedor;
 
@@ -12,10 +12,11 @@ import jakarta.inject.Inject;
 
 import java.util.Optional;
 
-@FacesConverter("fornecedorConverter")
+@FacesConverter(value = "fornecedorConverter", managed = true)
 public class FornecedorConverter implements Converter<Fornecedor> {
 
-    private final FornecedorDAO fornecedorDAO = new FornecedorDAO();
+    @Inject
+    private FornecedorService fornecedorService;
 
     @Override
     public Fornecedor getAsObject(
@@ -27,7 +28,7 @@ public class FornecedorConverter implements Converter<Fornecedor> {
             return null;
         }
 
-        Optional<Fornecedor> optFornecedor = fornecedorDAO.buscarPorId(Long.valueOf(value));
+        Optional<Fornecedor> optFornecedor = fornecedorService.buscarPorId(Long.valueOf(value));
 
         return optFornecedor.orElse(null);
     }

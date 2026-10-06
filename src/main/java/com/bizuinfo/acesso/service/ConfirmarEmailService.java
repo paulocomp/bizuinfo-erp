@@ -1,15 +1,17 @@
 package com.bizuinfo.acesso.service;
 
+import com.bizuinfo.infra.persistencia.Transacional;
+import jakarta.enterprise.context.ApplicationScoped;
 import com.bizuinfo.acesso.model.TipoToken;
 import com.bizuinfo.infra.service.EmailService;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Usuario;
-import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 
 import java.util.Optional;
 
-@Stateless
+@ApplicationScoped
+@Transacional
 public class ConfirmarEmailService {
 
     @Inject

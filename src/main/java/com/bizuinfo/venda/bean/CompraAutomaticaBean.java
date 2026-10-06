@@ -1,9 +1,9 @@
 package com.bizuinfo.venda.bean;
 
+import jakarta.inject.Inject;
 import com.bizuinfo.produto.dto.SugestaoCompraDTO;
 import com.bizuinfo.venda.service.CompraAutomaticaService;
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.EJB; // <- REGRA APLICADA
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @ViewScoped
 public class CompraAutomaticaBean implements Serializable {
 
-    @EJB
+    @Inject
     private CompraAutomaticaService simulacaoService;
 
     private List<SugestaoCompraDTO> sugestoes;

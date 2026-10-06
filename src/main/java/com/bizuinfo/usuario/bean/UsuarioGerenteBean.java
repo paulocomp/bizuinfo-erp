@@ -4,7 +4,6 @@ import com.bizuinfo.infra.exception.RegraNegocioException;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.usuario.service.UsuarioLogado;
 import com.bizuinfo.usuario.service.UsuarioService;
-import jakarta.ejb.EJB;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
@@ -20,7 +19,7 @@ import java.util.List;
 @ViewScoped
 public class UsuarioGerenteBean implements Serializable {
 
-    @EJB
+    @Inject
     private UsuarioService usuarioService;
 
     @Inject

@@ -1,7 +1,13 @@
 package com.bizuinfo.venda.service;
 
+import com.bizuinfo.infra.persistencia.Transacional;
+import jakarta.enterprise.context.ApplicationScoped;
 import com.bizuinfo.infra.service.EmailService;
-import com.bizuinfo.infra.util.JPAutil;
+import com.bizuinfo.infra.persistencia.ContextoPersistencia;
+import com.bizuinfo.produto.dao.ProdutoDAO;
+import com.bizuinfo.usuario.dao.UsuarioDAO;
+import com.bizuinfo.venda.dao.ItemVendaDAO;
+import com.bizuinfo.venda.dao.PagamentoDAO;
 import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.auditoria.service.LogAuditoriaService;
@@ -11,18 +17,16 @@ import com.bizuinfo.venda.dao.VendaDAO;
 import com.bizuinfo.venda.model.ItemVenda;
 import com.bizuinfo.venda.model.Pagamento;
 import com.bizuinfo.venda.model.Venda;
-import jakarta.ejb.EJB;
-import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Stateless
+@ApplicationScoped
+@Transacional
 public class VendaService {
 
-    @EJB
+    @Inject
     private LogAuditoriaService logAuditoriaService;
 
     @Inject
@@ -30,6 +34,21 @@ public class VendaService {
 
     @Inject
     private VendaDAO vendaDAO;
+
+    @Inject
+    private ItemVendaDAO itemVendaDAO;
+
+    @Inject
+    private PagamentoDAO pagamentoDAO;
+
+    @Inject
+    private ProdutoDAO produtoDAO;
+
+    @Inject
+    private UsuarioDAO usuarioDAO;
+
+    @Inject
+    private ContextoPersistencia contexto;
 
     private static final String EMAIL_GERENCIA = "bizuinfo.contato@gmail.com";
 
@@ -85,35 +104,25 @@ public class VendaService {
             List<ItemVenda> itens
     ) {
 
-        EntityManager em = JPAutil.getEntityManager();
+        if (venda == null) {
+            throw new RegraNegocioException("Venda não informada.");
+        }
+
+        if (venda.getUsuario() == null) {
+            throw new RegraNegocioException("Usuário da venda não foi informado.");
+        }
 
         try {
-
-            if (venda == null) {
-                throw new RuntimeException("Venda não informada.");
-            }
-
-            if (venda.getUsuario() == null) {
-                throw new RuntimeException("Usuário da venda não foi informado.");
-            }
-
-            em.getTransaction().begin();
 
             double valorTotal = 0.0;
 
             for (ItemVenda item : itens) {
 
-                Produto produto = em.find(
-                        Produto.class,
-                        item.getProduto().getId()
-                );
-
-                if (produto == null) {
-                    throw new RuntimeException("Produto não encontrado.");
-                }
+                Produto produto = produtoDAO.buscarPorId(item.getProduto().getId())
+                        .orElseThrow(() -> new RegraNegocioException("Produto não encontrado."));
 
                 if (produto.getEstoqueAtual() < item.getQuantidade()) {
-                    throw new RuntimeException("Estoque insuficiente para: " + produto.getNome());
+                    throw new RegraNegocioException("Estoque insuficiente para: " + produto.getNome());
                 }
 
                 double subtotal = item.getQuantidade() * produto.getPreco();
@@ -123,34 +132,28 @@ public class VendaService {
 
                 valorTotal += subtotal;
 
+                // produto está gerenciado: a baixa é gravada no commit
                 produto.setEstoqueAtual(produto.getEstoqueAtual() - item.getQuantidade());
 
-                verificarAlerta(produto);
-
-                em.merge(produto);
+                contexto.aposCommit(() -> verificarAlerta(produto));
             }
 
             venda.setValorTotal(valorTotal);
 
-            Usuario usuarioGerenciado = em.find(
-                    Usuario.class,
-                    venda.getUsuario().getId()
+            venda.setUsuario(
+                    usuarioDAO.buscarPorId(venda.getUsuario().getId())
+                            .orElseThrow(() -> new RegraNegocioException("Usuário da venda não encontrado."))
             );
 
-            venda.setUsuario(usuarioGerenciado);
-
-            em.persist(venda);
-            em.flush();
+            vendaDAO.inserir(venda);
 
             for (ItemVenda item : itens) {
                 item.setVenda(venda);
-                em.merge(item);
+                itemVendaDAO.salvar(item);
             }
 
             pagamento.setVenda(venda);
-            em.persist(pagamento);
-
-            em.getTransaction().commit();
+            pagamentoDAO.inserir(pagamento);
 
             logAuditoriaService.registrar(
                     "VENDA_FINALIZADA",
@@ -165,16 +168,11 @@ public class VendaService {
 
             return venda;
 
-        } catch (Exception e) {
+        } catch (RegraNegocioException e) {
+            throw e;
 
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-
+        } catch (RuntimeException e) {
             throw new RuntimeException("Erro ao finalizar venda.", e);
-
-        } finally {
-            em.close();
         }
     }
 

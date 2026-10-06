@@ -1,5 +1,6 @@
 package com.bizuinfo.venda.service;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import com.bizuinfo.venda.model.Venda;
 import com.bizuinfo.venda.model.ItemVenda;
 import com.lowagie.text.*;
@@ -10,12 +11,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-import jakarta.ejb.Stateless;
 
 import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
 
-@Stateless
+@ApplicationScoped
 public class VendaPDFService {
 
     public byte[] gerarRecibo(Venda venda) {

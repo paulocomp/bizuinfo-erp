@@ -1,9 +1,9 @@
 package com.bizuinfo.auditoria.bean;
 
+import jakarta.inject.Inject;
 import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import com.bizuinfo.auditoria.model.LogAuditoria;
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.EJB;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @ViewScoped
 public class LogAuditoriaBean implements Serializable {
 
-    @EJB
+    @Inject
     private LogAuditoriaService logAuditoriaService;
 
     private List<LogAuditoria> logs;

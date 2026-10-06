@@ -1,9 +1,9 @@
 package com.bizuinfo.produto.bean;
 
+import jakarta.inject.Inject;
 import com.bizuinfo.produto.model.Fornecedor;
 import com.bizuinfo.produto.service.FornecedorService;
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.EJB; // <- REGRA APLICADA: Injeção do EJB
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped; // <- CDI para a tela
@@ -16,7 +16,7 @@ import java.util.List;
 @ViewScoped
 public class FornecedorBean implements Serializable {
 
-    @EJB
+    @Inject
     private FornecedorService fornecedorService;
 
     private List<Fornecedor> fornecedores;

@@ -1,14 +1,16 @@
 package com.bizuinfo.auditoria.service;
 
+import com.bizuinfo.infra.persistencia.Transacional;
+import jakarta.enterprise.context.ApplicationScoped;
 import com.bizuinfo.infra.util.RequestUtil;
 import com.bizuinfo.auditoria.dao.LogAuditoriaDAO;
 import com.bizuinfo.auditoria.model.LogAuditoria;
-import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 
 import java.util.List;
 
-@Stateless
+@ApplicationScoped
+@Transacional
 public class LogAuditoriaService {
 
     @Inject

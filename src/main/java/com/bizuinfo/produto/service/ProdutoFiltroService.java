@@ -1,12 +1,12 @@
 package com.bizuinfo.produto.service;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import com.bizuinfo.produto.model.Produto;
-import jakarta.ejb.Stateful;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Stateful
+@ApplicationScoped
 public class ProdutoFiltroService {
 
     public List<Produto> filtrarPorNomeOuCategoria(

@@ -1,26 +1,27 @@
 package com.bizuinfo.acesso.service;
 
+import com.bizuinfo.infra.persistencia.Transacional;
+import jakarta.enterprise.context.ApplicationScoped;
 import com.bizuinfo.acesso.model.TipoToken;
 import com.bizuinfo.infra.service.EmailService;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Usuario;
 
-import jakarta.ejb.EJB;
-import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 
 import java.util.Optional;
 
-@Stateless
+@ApplicationScoped
+@Transacional
 public class RecuperarAcessoService {
 
     @Inject
     private UsuarioDAO usuarioDAO;
 
-    @EJB
+    @Inject
     private LinkMagicoService linkMagicoService;
 
-    @EJB
+    @Inject
     private EmailService emailService;
 
     /**

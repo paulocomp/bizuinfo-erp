@@ -1,7 +1,6 @@
 package com.bizuinfo.produto.dao;
 
 import com.bizuinfo.infra.dao.GenericoDAO;
-import com.bizuinfo.infra.util.JPAutil;
 import com.bizuinfo.produto.model.Categoria;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -20,7 +19,8 @@ public class CategoriaDAO extends GenericoDAO<Categoria> {
 
     public Optional<Categoria> buscarPorNome(String nome) {
 
-        try (EntityManager em = JPAutil.getEntityManager()) {
+        try {
+            EntityManager em = em();
 
             Categoria c = em.createQuery(
                             "SELECT c FROM Categoria c WHERE c.nome = :nome",
@@ -40,12 +40,11 @@ public class CategoriaDAO extends GenericoDAO<Categoria> {
     @Override
     public List<Categoria> listarTodos() {
 
-        try (EntityManager em = JPAutil.getEntityManager()) {
+        EntityManager em = em();
 
-            return em.createQuery(
-                    "SELECT c FROM Categoria c",
-                    Categoria.class
-            ).getResultList();
-        }
+        return em.createQuery(
+                "SELECT c FROM Categoria c",
+                Categoria.class
+        ).getResultList();
     }
 }

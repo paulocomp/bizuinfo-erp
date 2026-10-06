@@ -1,7 +1,6 @@
 package com.bizuinfo.usuario.dao;
 
 import com.bizuinfo.infra.dao.GenericoDAO;
-import com.bizuinfo.infra.util.JPAutil;
 import com.bizuinfo.usuario.model.Usuario;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
@@ -19,7 +18,8 @@ public class UsuarioDAO extends GenericoDAO<Usuario> {
 
     public Optional<Usuario> buscarPorEmail(String email) {
 
-        try (EntityManager em = JPAutil.getEntityManager()) {
+        try {
+            EntityManager em = em();
 
             Usuario u = em.createQuery(
                             "SELECT u FROM Usuario u WHERE u.email = :email",
@@ -39,17 +39,17 @@ public class UsuarioDAO extends GenericoDAO<Usuario> {
 
     public List<Usuario> listarTodos() {
 
-        try (EntityManager em = JPAutil.getEntityManager()) {
-            return em.createQuery(
-                    "SELECT u FROM Usuario u ORDER BY u.id",
-                    Usuario.class
-            ).getResultList();
-        }
+        EntityManager em = em();
+        return em.createQuery(
+                "SELECT u FROM Usuario u ORDER BY u.id",
+                Usuario.class
+        ).getResultList();
     }
 
     public Optional<Usuario> buscarPorToken(String token) {
 
-        try (EntityManager em = JPAutil.getEntityManager()) {
+        try {
+            EntityManager em = em();
 
             Usuario u = em.createQuery(
                             """
@@ -75,31 +75,13 @@ public class UsuarioDAO extends GenericoDAO<Usuario> {
     @Override
     public void remover(Long id) {
 
-        EntityManager em = JPAutil.getEntityManager();
+        EntityManager em = emEscrita();
 
-        try {
-            em.getTransaction().begin();
+        em.createNativeQuery("DELETE FROM compra WHERE usuario_id = ?1")
+                .setParameter(1, id)
+                .executeUpdate();
 
-            em.createNativeQuery("DELETE FROM compra WHERE usuario_id = " + id)
-                    .executeUpdate();
-
-            Usuario ref = em.getReference(Usuario.class, id);
-            em.remove(ref);
-
-            em.flush();
-
-            em.getTransaction().commit();
-
-        } catch (Exception e) {
-
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-
-            throw new RuntimeException("Erro ao excluir usuário: " + e.getMessage(), e);
-
-        } finally {
-            em.close();
-        }
+        em.remove(em.getReference(Usuario.class, id));
+        em.flush();
     }
 }

@@ -5,7 +5,6 @@ import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.venda.model.*;
 import com.bizuinfo.venda.service.VendaPDFService;
 import com.bizuinfo.venda.service.VendaService;
-import jakarta.ejb.EJB;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
@@ -28,10 +27,10 @@ public class CheckoutBean implements Serializable {
     @Inject
     private UsuarioLogado usuarioLogado;
 
-    @EJB
+    @Inject
     private VendaPDFService vendaPDFService;
 
-    @EJB
+    @Inject
     private VendaService vendaService;
 
     private FormaPagamento formaPagamento;

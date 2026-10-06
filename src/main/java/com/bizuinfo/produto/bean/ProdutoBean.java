@@ -1,10 +1,10 @@
 package com.bizuinfo.produto.bean;
 
+import jakarta.inject.Inject;
 import com.bizuinfo.produto.service.ProdutoService;
 import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.web.Paginas;
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.EJB;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
@@ -18,7 +18,7 @@ public class ProdutoBean implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @EJB
+    @Inject
     private ProdutoService produtoService;
 
     private Produto produto;

@@ -4,7 +4,6 @@ import com.bizuinfo.acesso.dto.LoginResultado;
 import com.bizuinfo.acesso.service.LoginService;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.web.Paginas;
-import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -24,7 +23,7 @@ public class LoginBean implements Serializable {
     private String email;
     private String senha;
 
-    @EJB
+    @Inject
     private LoginService loginService;
 
     @Inject

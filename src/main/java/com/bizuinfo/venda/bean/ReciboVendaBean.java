@@ -5,7 +5,6 @@ import com.bizuinfo.venda.model.Venda;
 import com.bizuinfo.venda.service.VendaPDFService;
 import com.bizuinfo.venda.service.VendaService;
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.EJB;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
@@ -25,10 +24,10 @@ public class ReciboVendaBean implements Serializable {
     @Inject
     private UsuarioLogado usuarioLogado;
 
-    @EJB
+    @Inject
     private VendaService vendaService;
 
-    @EJB
+    @Inject
     private VendaPDFService vendaPDFService;
 
     private Venda venda;

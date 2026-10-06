@@ -1,27 +1,32 @@
 package com.bizuinfo.produto.service;
 
+import com.bizuinfo.infra.persistencia.Transacional;
+import jakarta.enterprise.context.ApplicationScoped;
+import com.bizuinfo.infra.persistencia.ContextoPersistencia;
 import com.bizuinfo.infra.service.EmailService;
 import com.bizuinfo.produto.dao.ProdutoDAO;
 import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.auditoria.service.LogAuditoriaService;
-import jakarta.ejb.EJB;
-import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 
 import java.util.Optional;
 
-@Stateless
+@ApplicationScoped
+@Transacional
 public class EstoqueService {
 
     @Inject
     private ProdutoDAO produtoDAO;
 
-    @EJB
+    @Inject
     private LogAuditoriaService logAuditoriaService;
 
-    @EJB
+    @Inject
     private EmailService emailService;
+
+    @Inject
+    private ContextoPersistencia contexto;
 
     private static final String EMAIL_GERENCIA = "bizuinfo.contato@gmail.com";
 
@@ -60,7 +65,7 @@ public class EstoqueService {
                     usuario.getNome()
             );
 
-            verificarAlerta(produto);
+            contexto.aposCommit(() -> verificarAlerta(produto));
         }
     }
 

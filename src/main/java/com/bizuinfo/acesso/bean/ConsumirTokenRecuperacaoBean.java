@@ -1,9 +1,9 @@
 package com.bizuinfo.acesso.bean;
 
+import jakarta.inject.Inject;
 import com.bizuinfo.acesso.service.ConsumirTokenRecuperacaoService;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.web.Paginas;
-import jakarta.ejb.EJB;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
@@ -12,7 +12,7 @@ import jakarta.inject.Named;
 @RequestScoped
 public class ConsumirTokenRecuperacaoBean {
 
-    @EJB
+    @Inject
     private ConsumirTokenRecuperacaoService consumirTokenService;
 
     private String token;

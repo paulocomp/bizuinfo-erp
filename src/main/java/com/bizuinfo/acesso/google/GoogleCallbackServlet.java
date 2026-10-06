@@ -1,9 +1,9 @@
 package com.bizuinfo.acesso.google;
 
+import jakarta.inject.Inject;
 import com.bizuinfo.acesso.bean.SessaoBean;
 import com.bizuinfo.acesso.service.LoginService;
 import com.bizuinfo.usuario.model.Usuario;
-import jakarta.ejb.EJB;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
@@ -25,7 +25,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @WebServlet("/google/callback")
 public class GoogleCallbackServlet extends HttpServlet {
 
-    @EJB
+    @Inject
     private LoginService loginService;
 
     @Override

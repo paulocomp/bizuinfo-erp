@@ -1,6 +1,6 @@
 package com.bizuinfo.produto.converter;
 
-import com.bizuinfo.produto.dao.CategoriaDAO;
+import com.bizuinfo.produto.service.CategoriaService;
 import com.bizuinfo.produto.model.Categoria;
 
 import jakarta.faces.component.UIComponent;
@@ -11,10 +11,11 @@ import jakarta.inject.Inject;
 
 import java.util.Optional;
 
-@FacesConverter("categoriaConverter")
+@FacesConverter(value = "categoriaConverter", managed = true)
 public class CategoriaConverter implements Converter<Categoria> {
 
-    private final CategoriaDAO categoriaDAO = new CategoriaDAO();
+    @Inject
+    private CategoriaService categoriaService;
 
     @Override
     public Categoria getAsObject(
@@ -26,7 +27,7 @@ public class CategoriaConverter implements Converter<Categoria> {
             return null;
         }
 
-        Optional<Categoria> optCategoria = categoriaDAO.buscarPorId(Long.valueOf(value));
+        Optional<Categoria> optCategoria = categoriaService.buscarPorId(Long.valueOf(value));
 
         return optCategoria.orElse(null);
     }

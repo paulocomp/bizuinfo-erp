@@ -5,7 +5,6 @@ import com.bizuinfo.venda.service.VendaService;
 import com.bizuinfo.venda.model.ItemVenda;
 import com.bizuinfo.venda.model.Venda;
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.EJB;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -22,7 +21,7 @@ import java.util.*;
 @ViewScoped
 public class DashboardBean implements Serializable {
 
-    @EJB
+    @Inject
     private VendaService vendaService;
 
     @Inject

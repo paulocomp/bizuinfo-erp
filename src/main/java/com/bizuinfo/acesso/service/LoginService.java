@@ -1,18 +1,20 @@
 package com.bizuinfo.acesso.service;
 
+import com.bizuinfo.infra.persistencia.Transacional;
+import jakarta.enterprise.context.ApplicationScoped;
 import com.bizuinfo.acesso.dto.LoginResultado;
 import com.bizuinfo.acesso.model.ResultadoLogin;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Role;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.auditoria.service.LogAuditoriaService;
-import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
 
-@Stateless
+@ApplicationScoped
+@Transacional
 public class LoginService {
 
     @Inject

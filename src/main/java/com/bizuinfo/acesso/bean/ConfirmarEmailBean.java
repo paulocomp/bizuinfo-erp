@@ -1,8 +1,8 @@
 package com.bizuinfo.acesso.bean;
 
+import jakarta.inject.Inject;
 import com.bizuinfo.acesso.service.ConfirmarEmailService;
 import com.bizuinfo.web.Paginas;
-import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -23,7 +23,7 @@ public class ConfirmarEmailBean implements Serializable {
     private long ultimoReenvio = 0;
     private static final long INTERVALO = 5000;
 
-    @EJB
+    @Inject
     private ConfirmarEmailService confirmarEmailService;
 
     public void confirmarEmail() {

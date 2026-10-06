@@ -1,14 +1,14 @@
 package com.bizuinfo.acesso.service;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import com.bizuinfo.acesso.model.TipoToken;
 import com.bizuinfo.usuario.model.Usuario;
 
-import jakarta.ejb.Stateless;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Stateless
+@ApplicationScoped
 public class LinkMagicoService {
 
     private static final int EXPIRACAO_MINUTOS = 15;

@@ -1,24 +1,25 @@
 package com.bizuinfo.usuario.service;
 
+import com.bizuinfo.infra.persistencia.Transacional;
+import jakarta.enterprise.context.ApplicationScoped;
 import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import com.bizuinfo.infra.exception.RegraNegocioException;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.usuario.model.Role;
-import jakarta.ejb.EJB;
-import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
 
-@Stateless
+@ApplicationScoped
+@Transacional
 public class UsuarioService {
 
     @Inject
     private UsuarioDAO uDAO;
 
-    @EJB
+    @Inject
     private LogAuditoriaService logAuditoriaService;
 
     public boolean cadastrar(String nome, String email, String senha) {

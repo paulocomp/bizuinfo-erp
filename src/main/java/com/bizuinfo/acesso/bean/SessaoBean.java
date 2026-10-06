@@ -1,9 +1,9 @@
 package com.bizuinfo.acesso.bean;
 
+import jakarta.inject.Inject;
 import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.usuario.service.UsuarioLogado;
-import jakarta.ejb.EJB;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
@@ -21,7 +21,7 @@ public class SessaoBean implements UsuarioLogado {
 
     public static final String ATRIBUTO_USUARIO = "usuario";
 
-    @EJB
+    @Inject
     private LogAuditoriaService logAuditoriaService;
 
     @Override

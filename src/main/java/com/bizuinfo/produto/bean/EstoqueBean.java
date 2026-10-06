@@ -6,7 +6,6 @@ import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.produto.service.EstoqueService;
 import com.bizuinfo.produto.service.ProdutoFiltroService;
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.EJB;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
@@ -27,13 +26,13 @@ public class EstoqueBean implements Serializable {
     @Inject
     private UsuarioLogado usuarioLogado;
 
-    @EJB
+    @Inject
     private ProdutoFiltroService produtoFiltroService;
 
-    @EJB
+    @Inject
     private EstoqueService estoqueService;
 
-    @EJB
+    @Inject
     private ProdutoService produtoService;
 
     private List<Produto> produtos;
