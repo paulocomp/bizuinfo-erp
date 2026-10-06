@@ -1,5 +1,6 @@
 package com.bizuinfo.acesso.filter;
 
+import com.bizuinfo.acesso.bean.SessaoBean;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.usuario.model.Role;
 
@@ -25,7 +26,7 @@ public class PublicoFilter implements Filter {
         Usuario usuario = null;
 
         if (session != null) {
-            usuario = (Usuario) session.getAttribute("usuario");
+            usuario = (Usuario) session.getAttribute(SessaoBean.ATRIBUTO_USUARIO);
         }
 
         if (usuario != null) {

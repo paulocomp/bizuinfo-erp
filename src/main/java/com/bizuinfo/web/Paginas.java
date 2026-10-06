@@ -1,5 +1,8 @@
 package com.bizuinfo.web;
 
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
+
 public class Paginas {
 
 
@@ -45,4 +48,23 @@ public class Paginas {
     public static final String MINHAS_VENDAS            = RESTRITO + VENDA     + "minhas_vendas.xhtml";
     public static final String RECIBO_VENDA             = RESTRITO + VENDA     + "recibo_venda.xhtml";
 
+    /**
+     * Monta a URL completa de uma página a partir da requisição atual,
+     * por exemplo http://localhost:8080/bizuinfo_erp_war_exploded/publico/acesso/login.xhtml.
+     * Usada nos links enviados por email, que precisam funcionar fora do navegador.
+     */
+    public static String urlAbsoluta(String pagina) {
+
+        ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
+
+        String scheme = ctx.getRequestScheme();
+        int porta = ctx.getRequestServerPort();
+        boolean portaPadrao = ("http".equals(scheme) && porta == 80)
+                || ("https".equals(scheme) && porta == 443);
+
+        return scheme + "://" + ctx.getRequestServerName()
+                + (portaPadrao ? "" : ":" + porta)
+                + ctx.getRequestContextPath()
+                + pagina;
+    }
 }

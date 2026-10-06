@@ -1,4 +1,4 @@
-package com.bizuinfo.venda.dto;
+package com.bizuinfo.produto.dto;
 
 import com.bizuinfo.produto.model.Produto;
 

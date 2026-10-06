@@ -127,7 +127,7 @@
                                 </f:facet>
                                 <f:facet name="input">
                                     <p:selectOneMenu value="#{u.role}"
-                                                     disabled="#{loginBean.usuarioLogado.id == u.id}">
+                                                     disabled="#{sessaoBean.usuarioLogado.id == u.id}">
                                         <f:selectItem itemLabel="FUNCIONARIO"
                                                       itemValue="FUNCIONARIO"/>
                                         <f:selectItem itemLabel="GERENTE"

@@ -1,4 +1,4 @@
-package com.bizuinfo.usuario.model;
+package com.bizuinfo.auditoria.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

@@ -1,6 +1,6 @@
 package com.bizuinfo.venda.bean;
 
-import com.bizuinfo.venda.dto.SugestaoCompraDTO;
+import com.bizuinfo.produto.dto.SugestaoCompraDTO;
 import com.bizuinfo.venda.service.CompraAutomaticaService;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB; // <- REGRA APLICADA

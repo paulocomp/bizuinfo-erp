@@ -1,6 +1,6 @@
 package com.bizuinfo.venda.bean;
 
-import com.bizuinfo.acesso.bean.SessaoBean;
+import com.bizuinfo.usuario.service.UsuarioLogado;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.usuario.model.Role;
 import com.bizuinfo.venda.dao.VendaDAO;
@@ -30,7 +30,7 @@ public class MinhasVendasBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private SessaoBean sessaoBean;
+    private UsuarioLogado usuarioLogado;
 
     @Inject
     private VendaDAO vendaDAO;
@@ -50,19 +50,7 @@ public class MinhasVendasBean implements Serializable {
 
     public void carregar() {
 
-        Usuario usuario = sessaoBean.getUsuarioLogado();
-
-        if (usuario == null) {
-            Object sessionUser = FacesContext.getCurrentInstance()
-                    .getExternalContext()
-                    .getSessionMap()
-                    .get("usuario");
-
-            if (sessionUser instanceof Usuario) {
-                usuario = (Usuario) sessionUser;
-                sessaoBean.login(usuario); // sincroniza sessão bean
-            }
-        }
+        Usuario usuario = usuarioLogado.getUsuarioLogado();
 
         if (usuario.getRole().temPermissao(Role.GERENTE)) {
             vendas = vendaDAO.buscarTodas();
@@ -73,7 +61,7 @@ public class MinhasVendasBean implements Serializable {
 
     public void filtrar() {
 
-        Usuario usuario = sessaoBean.getUsuarioLogado();
+        Usuario usuario = usuarioLogado.getUsuarioLogado();
 
         if (dataInicial == null || dataFinal == null) {
             carregar();
@@ -128,7 +116,7 @@ public class MinhasVendasBean implements Serializable {
 
         try {
 
-            Usuario usuario = sessaoBean.getUsuarioLogado();
+            Usuario usuario = usuarioLogado.getUsuarioLogado();
 
             StringBuilder csv = new StringBuilder();
 

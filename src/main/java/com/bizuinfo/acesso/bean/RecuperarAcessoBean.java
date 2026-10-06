@@ -1,6 +1,7 @@
 package com.bizuinfo.acesso.bean;
 
 import com.bizuinfo.acesso.service.RecuperarAcessoService;
+import com.bizuinfo.web.Paginas;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -31,7 +32,7 @@ public class RecuperarAcessoBean implements Serializable {
 
         ultimoReenvio = System.currentTimeMillis();
 
-        recuperarAcessoService.enviarLink(email);
+        recuperarAcessoService.enviarLink(email, Paginas.urlAbsoluta(Paginas.CONSUMIR_TOKEN_RECUPERACAO));
 
         linkEnviado = true;
 
@@ -53,7 +54,7 @@ public class RecuperarAcessoBean implements Serializable {
 
         ultimoReenvio = System.currentTimeMillis();
 
-        recuperarAcessoService.enviarLink(email);
+        recuperarAcessoService.enviarLink(email, Paginas.urlAbsoluta(Paginas.CONSUMIR_TOKEN_RECUPERACAO));
 
         FacesContext.getCurrentInstance().addMessage(
             null,

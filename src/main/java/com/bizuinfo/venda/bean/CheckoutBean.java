@@ -1,6 +1,6 @@
 package com.bizuinfo.venda.bean;
 
-import com.bizuinfo.acesso.bean.SessaoBean;
+import com.bizuinfo.usuario.service.UsuarioLogado;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.venda.model.*;
 import com.bizuinfo.venda.service.VendaPDFService;
@@ -26,7 +26,7 @@ public class CheckoutBean implements Serializable {
     private CarrinhoBean carrinhoBean;
 
     @Inject
-    private SessaoBean sessaoBean;
+    private UsuarioLogado usuarioLogado;
 
     @EJB
     private VendaPDFService vendaPDFService;
@@ -62,19 +62,7 @@ public class CheckoutBean implements Serializable {
                 throw new RuntimeException("Gere o código PIX antes de finalizar.");
             }
 
-            Usuario usuario = sessaoBean.getUsuarioLogado();
-
-            if (usuario == null) {
-                Object sessionUser = FacesContext.getCurrentInstance()
-                        .getExternalContext()
-                        .getSessionMap()
-                        .get("usuario");
-
-                if (sessionUser instanceof Usuario) {
-                    usuario = (Usuario) sessionUser;
-                    sessaoBean.login(usuario); // sincroniza sessão bean
-                }
-            }
+            Usuario usuario = usuarioLogado.getUsuarioLogado();
 
             if (usuario == null) {
                 throw new RuntimeException("Usuário não autenticado na sessão.");

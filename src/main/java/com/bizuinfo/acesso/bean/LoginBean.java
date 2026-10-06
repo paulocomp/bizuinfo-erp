@@ -3,7 +3,6 @@ package com.bizuinfo.acesso.bean;
 import com.bizuinfo.acesso.dto.LoginResultado;
 import com.bizuinfo.acesso.service.LoginService;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.usuario.service.LogAuditoriaService;
 import com.bizuinfo.web.Paginas;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
@@ -27,6 +26,9 @@ public class LoginBean implements Serializable {
 
     @EJB
     private LoginService loginService;
+
+    @Inject
+    private SessaoBean sessaoBean;
 
     public String entrar() {
 
@@ -58,10 +60,7 @@ public class LoginBean implements Serializable {
 
                 Usuario usuario = resultado.getUsuario();
 
-                FacesContext.getCurrentInstance()
-                        .getExternalContext()
-                        .getSessionMap()
-                        .put("usuario", usuario);
+                sessaoBean.iniciarSessao(usuario);
 
                 return switch (usuario.getRole()) {
 
@@ -80,38 +79,11 @@ public class LoginBean implements Serializable {
         return null;
     }
 
-    @EJB
-    private LogAuditoriaService logAuditoriaService;
-
-    @Inject
-    private SessaoBean sessaoBean;
-
     public String sair() {
 
-        Usuario usuario = getUsuarioLogado();
-
-        if (usuario != null) {
-
-            logAuditoriaService.registrar(
-                    "LOGOUT",
-                    "Usuário saiu do sistema",
-                    usuario.getNome()
-            );
-        }
-
-        usuario = null;
-        sessaoBean.logout();
-
-        FacesContext.getCurrentInstance()
-                .getExternalContext()
-                .invalidateSession();
+        sessaoBean.encerrarSessao();
 
         return Paginas.LOGIN + "?faces-redirect=true";
-    }
-
-
-    public boolean logado() {
-        return getUsuarioLogado() != null;
     }
 
     public String getEmail() {
@@ -120,20 +92,6 @@ public class LoginBean implements Serializable {
 
     public String getSenha() {
         return senha;
-    }
-
-    public Usuario getUsuarioLogado() {
-
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        if (context == null) {
-            return null;
-        }
-
-        return (Usuario) context
-                .getExternalContext()
-                .getSessionMap()
-                .get("usuario");
     }
 
     public void setEmail(String email) {

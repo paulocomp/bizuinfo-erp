@@ -1,6 +1,7 @@
 package com.bizuinfo.acesso.bean;
 
 import com.bizuinfo.acesso.service.ConfirmarEmailService;
+import com.bizuinfo.web.Paginas;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -26,7 +27,7 @@ public class ConfirmarEmailBean implements Serializable {
     private ConfirmarEmailService confirmarEmailService;
 
     public void confirmarEmail() {
-        confirmarEmailService.enviarLink(email);
+        confirmarEmailService.enviarLink(email, Paginas.urlAbsoluta(Paginas.CONSUMIR_TOKEN_CONFIRMACAO));
     }
 
     public void reenviarLink() {
@@ -37,7 +38,7 @@ public class ConfirmarEmailBean implements Serializable {
 
         ultimoReenvio = System.currentTimeMillis();
 
-        confirmarEmailService.enviarLink(email);
+        confirmarEmailService.enviarLink(email, Paginas.urlAbsoluta(Paginas.CONSUMIR_TOKEN_CONFIRMACAO));
 
         FacesContext.getCurrentInstance().addMessage(
             null,

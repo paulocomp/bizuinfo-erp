@@ -1,6 +1,6 @@
 package com.bizuinfo.produto.bean;
 
-import com.bizuinfo.acesso.bean.SessaoBean;
+import com.bizuinfo.usuario.service.UsuarioLogado;
 import com.bizuinfo.produto.dao.ProdutoDAO;
 import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.produto.service.EstoqueService;
@@ -28,7 +28,7 @@ public class EstoqueBean implements Serializable {
     private ProdutoDAO produtoDAO;
 
     @Inject
-    private SessaoBean sessaoBean;
+    private UsuarioLogado usuarioLogado;
 
     @EJB
     private ProdutoFiltroService produtoFiltroService;
@@ -64,7 +64,7 @@ public class EstoqueBean implements Serializable {
             estoqueService.movimentarEstoque(
                     produtoSelecionado.getId(),
                     quantidadeMovimentacao,
-                    sessaoBean.getUsuarioLogado()
+                    usuarioLogado.getUsuarioLogado()
             );
 
             carregarProdutos();

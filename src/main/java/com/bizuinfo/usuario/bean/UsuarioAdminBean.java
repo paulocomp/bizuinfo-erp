@@ -1,10 +1,10 @@
 package com.bizuinfo.usuario.bean;
 
-import com.bizuinfo.acesso.bean.LoginBean;
+import com.bizuinfo.usuario.service.UsuarioLogado;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Role;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.usuario.service.LogAuditoriaService;
+import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.faces.application.FacesMessage;
@@ -28,7 +28,7 @@ public class UsuarioAdminBean implements Serializable {
     private LogAuditoriaService logAuditoriaService;
 
     @Inject
-    private LoginBean loginBean;
+    private UsuarioLogado usuarioLogado;
 
     private Long idUsuarioSelecionado;
 
@@ -58,8 +58,8 @@ public class UsuarioAdminBean implements Serializable {
             Usuario original = usuarioDAO.buscarPorId(editado.getId())
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-            if (loginBean.getUsuarioLogado() != null &&
-                    loginBean.getUsuarioLogado().getId().equals(editado.getId()) &&
+            if (usuarioLogado.getUsuarioLogado() != null &&
+                    usuarioLogado.getUsuarioLogado().getId().equals(editado.getId()) &&
                     editado.getRole() != Role.ADMIN) {
 
                 FacesContext.getCurrentInstance().addMessage(null,
@@ -119,7 +119,7 @@ public class UsuarioAdminBean implements Serializable {
             logAuditoriaService.registrar(
                     "EDITAR_USUARIO",
                     alteracoes.toString(),
-                    loginBean.getUsuarioLogado().getNome()
+                    usuarioLogado.getUsuarioLogado().getNome()
             );
 
             recarregar();
@@ -148,8 +148,8 @@ public class UsuarioAdminBean implements Serializable {
         try {
             if (idUsuarioSelecionado == null) return;
 
-            if (loginBean.getUsuarioLogado() != null &&
-                    loginBean.getUsuarioLogado().getId().equals(idUsuarioSelecionado)) {
+            if (usuarioLogado.getUsuarioLogado() != null &&
+                    usuarioLogado.getUsuarioLogado().getId().equals(idUsuarioSelecionado)) {
 
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -162,7 +162,7 @@ public class UsuarioAdminBean implements Serializable {
             logAuditoriaService.registrar(
                     "EXCLUIR_USUARIO",
                     "Excluiu usuário ID: " + idUsuarioSelecionado,
-                    loginBean.getUsuarioLogado().getNome()
+                    usuarioLogado.getUsuarioLogado().getNome()
             );
 
             idUsuarioSelecionado = null;

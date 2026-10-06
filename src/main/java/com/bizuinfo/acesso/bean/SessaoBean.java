@@ -1,52 +1,74 @@
 package com.bizuinfo.acesso.bean;
 
+import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.web.Paginas;
-import jakarta.enterprise.context.SessionScoped;
+import com.bizuinfo.usuario.service.UsuarioLogado;
+import jakarta.ejb.EJB;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 
-import java.io.Serial;
-import java.io.Serializable;
-
-import static com.bizuinfo.usuario.model.Role.ADMIN;
-import static com.bizuinfo.usuario.model.Role.GERENTE;
-
+/**
+ * Única fonte do usuário logado.
+ *
+ * O usuário fica guardado no atributo {@link #ATRIBUTO_USUARIO} da HttpSession,
+ * que também é lido pelos filtros (AuthFilter, RoleFilter, PublicoFilter).
+ * Este bean só lê dali, então não existe uma segunda cópia para sincronizar.
+ */
 @Named
-@SessionScoped // Agora ele persiste enquanto a sessão durar
-public class SessaoBean implements Serializable {
+@RequestScoped
+public class SessaoBean implements UsuarioLogado {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+    public static final String ATRIBUTO_USUARIO = "usuario";
 
-    private Usuario usuarioLogado;
+    @EJB
+    private LogAuditoriaService logAuditoriaService;
 
-    public void login(Usuario usuario) {
-        this.usuarioLogado = usuario;
-    }
-
-    public void logout() {
-        this.usuarioLogado = null;
-    }
-
-    public boolean isLogado() {
-        return usuarioLogado != null;
-    }
-
+    @Override
     public Usuario getUsuarioLogado() {
-        return usuarioLogado;
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        if (context == null) {
+            return null;
+        }
+
+        return (Usuario) context
+                .getExternalContext()
+                .getSessionMap()
+                .get(ATRIBUTO_USUARIO);
     }
 
-    public String getDashboard() {
-        return switch (usuarioLogado.getRole()) {
+    @Override
+    public boolean isLogado() {
+        return getUsuarioLogado() != null;
+    }
 
-            case ADMIN -> Paginas.DASHBOARD_ADMIN
-                    + "?faces-redirect=true";
+    /**
+     * Coloca o usuário na sessão depois de uma autenticação bem-sucedida.
+     */
+    public void iniciarSessao(Usuario usuario) {
+        FacesContext.getCurrentInstance()
+                .getExternalContext()
+                .getSessionMap()
+                .put(ATRIBUTO_USUARIO, usuario);
+    }
 
-            case GERENTE -> Paginas.DASHBOARD_GERENTE
-                    + "?faces-redirect=true";
+    @Override
+    public void encerrarSessao() {
 
-            default -> Paginas.DASHBOARD_FUNCIONARIO
-                    + "?faces-redirect=true";
-        };
+        Usuario usuario = getUsuarioLogado();
+
+        if (usuario != null) {
+            logAuditoriaService.registrar(
+                    "LOGOUT",
+                    "Usuário saiu do sistema",
+                    usuario.getNome()
+            );
+        }
+
+        FacesContext.getCurrentInstance()
+                .getExternalContext()
+                .invalidateSession();
     }
 }

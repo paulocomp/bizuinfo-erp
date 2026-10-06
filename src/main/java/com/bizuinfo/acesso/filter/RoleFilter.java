@@ -1,5 +1,6 @@
 package com.bizuinfo.acesso.filter;
 
+import com.bizuinfo.acesso.bean.SessaoBean;
 import com.bizuinfo.usuario.model.Role;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.web.Permissoes;
@@ -28,7 +29,7 @@ public class RoleFilter implements Filter {
             return;
         }
 
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = (Usuario) session.getAttribute(SessaoBean.ATRIBUTO_USUARIO);
 
         if (usuario == null) {
             res.sendRedirect(req.getContextPath() + Paginas.LOGIN);

@@ -1,5 +1,6 @@
 package com.bizuinfo.acesso.google;
 
+import com.bizuinfo.acesso.bean.SessaoBean;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Role;
 import com.bizuinfo.usuario.model.Usuario;
@@ -139,7 +140,7 @@ public class GoogleCallbackServlet extends HttpServlet {
                     // LOGIN
                     HttpSession session = request.getSession(true);
 
-                    session.setAttribute("usuario", usuario);
+                    session.setAttribute(SessaoBean.ATRIBUTO_USUARIO, usuario);
 
                     String dashboard = switch (usuario.getRole()) {
                         case ADMIN -> "/restrito/dashboard/dashboard_admin.xhtml";

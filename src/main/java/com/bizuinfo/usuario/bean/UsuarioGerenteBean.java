@@ -1,10 +1,10 @@
 package com.bizuinfo.usuario.bean;
 
-import com.bizuinfo.acesso.bean.LoginBean;
+import com.bizuinfo.usuario.service.UsuarioLogado;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Role;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.usuario.service.LogAuditoriaService;
+import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import jakarta.ejb.EJB;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -29,7 +29,7 @@ public class UsuarioGerenteBean implements Serializable {
     private LogAuditoriaService logAuditoriaService;
 
     @Inject
-    private LoginBean loginBean;
+    private UsuarioLogado usuarioLogado;
 
     private Long idUsuarioSelecionado;
 
@@ -137,7 +137,7 @@ public class UsuarioGerenteBean implements Serializable {
             logAuditoriaService.registrar(
                     "EDITAR_USUARIO",
                     alteracoes.toString(),
-                    loginBean.getUsuarioLogado().getNome()
+                    usuarioLogado.getUsuarioLogado().getNome()
             );
 
             usuariosCache = null;
@@ -184,7 +184,7 @@ public class UsuarioGerenteBean implements Serializable {
                 return;
             }
 
-            if (loginBean.getUsuarioLogado().getId().equals(idUsuarioSelecionado)) {
+            if (usuarioLogado.getUsuarioLogado().getId().equals(idUsuarioSelecionado)) {
                 FacesContext.getCurrentInstance().addMessage(
                         null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -198,7 +198,7 @@ public class UsuarioGerenteBean implements Serializable {
             logAuditoriaService.registrar(
                     "EXCLUIR_USUARIO",
                     "Excluiu usuário ID: " + idUsuarioSelecionado,
-                    loginBean.getUsuarioLogado().getNome()
+                    usuarioLogado.getUsuarioLogado().getNome()
             );
 
             idUsuarioSelecionado = null;

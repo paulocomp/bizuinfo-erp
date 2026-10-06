@@ -1,9 +1,9 @@
 package com.bizuinfo.usuario.bean;
 
-import com.bizuinfo.acesso.bean.LoginBean;
+import com.bizuinfo.usuario.service.UsuarioLogado;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.usuario.service.LogAuditoriaService;
+import com.bizuinfo.auditoria.service.LogAuditoriaService;
 
 import com.bizuinfo.web.Paginas;
 import jakarta.annotation.PostConstruct;
@@ -24,7 +24,7 @@ import java.io.Serializable;
 public class PerfilBean implements Serializable {
 
     @Inject
-    private LoginBean loginBean;
+    private UsuarioLogado usuarioLogado;
 
     @Inject
     private UsuarioDAO usuarioDAO;
@@ -39,7 +39,7 @@ public class PerfilBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        usuario = loginBean.getUsuarioLogado();
+        usuario = usuarioLogado.getUsuarioLogado();
     }
 
     public void salvar() {
@@ -124,10 +124,10 @@ public class PerfilBean implements Serializable {
 
             usuarioDAO.salvar(original);
 
-            loginBean.getUsuarioLogado()
+            usuarioLogado.getUsuarioLogado()
                     .setNome(original.getNome());
 
-            loginBean.getUsuarioLogado()
+            usuarioLogado.getUsuarioLogado()
                     .setEmail(original.getEmail());
 
             usuario = original;
@@ -179,7 +179,7 @@ public class PerfilBean implements Serializable {
 
             usuarioDAO.remover(id);
 
-            loginBean.sair();
+            usuarioLogado.encerrarSessao();
 
         } catch (Exception e) {
 
@@ -197,7 +197,7 @@ public class PerfilBean implements Serializable {
 
     public void voltar() throws IOException {
 
-        Usuario usuario = loginBean.getUsuarioLogado();
+        Usuario usuario = usuarioLogado.getUsuarioLogado();
 
         if (usuario == null) {
             return;

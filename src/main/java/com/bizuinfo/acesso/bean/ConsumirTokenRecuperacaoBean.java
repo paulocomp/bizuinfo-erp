@@ -28,7 +28,7 @@ public class ConsumirTokenRecuperacaoBean {
         FacesContext.getCurrentInstance()
                 .getExternalContext()
                 .getSessionMap()
-                .put("usuario", usuario);
+                .put(SessaoBean.ATRIBUTO_USUARIO, usuario);
 
         return switch (usuario.getRole()) {
 

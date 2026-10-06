@@ -1,7 +1,6 @@
 package com.bizuinfo.acesso.service;
 
 import com.bizuinfo.acesso.model.TipoToken;
-import com.bizuinfo.infra.service.LinkMagicoService;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Usuario;
 import jakarta.ejb.Stateless;

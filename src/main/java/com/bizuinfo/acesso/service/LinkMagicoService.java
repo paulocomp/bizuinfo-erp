@@ -1,4 +1,4 @@
-package com.bizuinfo.infra.service;
+package com.bizuinfo.acesso.service;
 
 import com.bizuinfo.acesso.model.TipoToken;
 import com.bizuinfo.usuario.model.Usuario;

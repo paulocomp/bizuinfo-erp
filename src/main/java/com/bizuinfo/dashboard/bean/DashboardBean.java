@@ -1,6 +1,6 @@
 package com.bizuinfo.dashboard.bean;
 
-import com.bizuinfo.acesso.bean.LoginBean;
+import com.bizuinfo.usuario.service.UsuarioLogado;
 import com.bizuinfo.usuario.model.Role;
 import com.bizuinfo.venda.dao.VendaDAO;
 import com.bizuinfo.venda.model.ItemVenda;
@@ -26,7 +26,7 @@ public class DashboardBean implements Serializable {
     private VendaDAO vendaDAO;
 
     @Inject
-    private LoginBean loginBean;
+    private UsuarioLogado usuarioLogado;
 
     private List<Venda> vendas;
 
@@ -51,8 +51,8 @@ public class DashboardBean implements Serializable {
 
         Long usuarioId = null;
 
-        if (loginBean.getUsuarioLogado().getRole() == Role.FUNCIONARIO) {
-            usuarioId = loginBean.getUsuarioLogado().getId();
+        if (usuarioLogado.getUsuarioLogado().getRole() == Role.FUNCIONARIO) {
+            usuarioId = usuarioLogado.getUsuarioLogado().getId();
         }
 
         vendas = vendaDAO.buscarVendasParaDashboard(usuarioId);

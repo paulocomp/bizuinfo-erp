@@ -1,6 +1,6 @@
 package com.bizuinfo.venda.bean;
 
-import com.bizuinfo.acesso.bean.SessaoBean;
+import com.bizuinfo.usuario.service.UsuarioLogado;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.usuario.model.Role;
 import com.bizuinfo.venda.dao.VendaDAO;
@@ -29,7 +29,7 @@ public class ReciboVendaBean implements Serializable {
     private VendaDAO vendaDAO;
 
     @Inject
-    private SessaoBean sessaoBean;
+    private UsuarioLogado usuarioLogado;
 
     @EJB
     private VendaService vendaService;
@@ -53,7 +53,7 @@ public class ReciboVendaBean implements Serializable {
             Venda vendaCarregada = vendaDAO.buscarCompletamente(vendaId)
                     .orElseThrow(() -> new RuntimeException("Venda não encontrada"));
 
-            Usuario usuario = sessaoBean.getUsuarioLogado();
+            Usuario usuario = usuarioLogado.getUsuarioLogado();
 
             boolean podeVer =
                     usuario.getRole().temPermissao(Role.GERENTE)

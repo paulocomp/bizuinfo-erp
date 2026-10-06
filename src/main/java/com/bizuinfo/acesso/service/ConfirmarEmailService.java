@@ -2,10 +2,8 @@ package com.bizuinfo.acesso.service;
 
 import com.bizuinfo.acesso.model.TipoToken;
 import com.bizuinfo.infra.service.EmailService;
-import com.bizuinfo.infra.service.LinkMagicoService;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.web.Paginas;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 
@@ -23,7 +21,11 @@ public class ConfirmarEmailService {
     @Inject
     private UsuarioDAO usuarioDAO;
 
-    public void enviarLink(String email) {
+    /**
+     * @param urlConfirmacao URL completa da página que consome o token;
+     *                       o token é acrescentado como parâmetro "token"
+     */
+    public void enviarLink(String email, String urlConfirmacao) {
 
         Optional<Usuario> optUsuario = usuarioDAO.buscarPorEmail(email);
 
@@ -40,10 +42,7 @@ public class ConfirmarEmailService {
 
         usuarioDAO.salvar(usuario);
 
-        String link = "http://localhost:8080/"
-                    + "bizuinfo_erp_war_exploded/"
-                    + Paginas.CONSUMIR_TOKEN_CONFIRMACAO + "?token="
-                    + usuario.getTokenVerificacao();
+        String link = urlConfirmacao + "?token=" + usuario.getTokenVerificacao();
 
         String text = "Clique no link para confirmar seu email da conta BizuInfo:<br><br>"
                     + "<a href='" + link + "'>Confirmar Email</a>";

@@ -4,7 +4,7 @@ import com.bizuinfo.produto.dao.CategoriaDAO;
 import com.bizuinfo.produto.dao.ProdutoDAO;
 import com.bizuinfo.produto.model.Categoria;
 import com.bizuinfo.produto.model.Produto;
-import com.bizuinfo.venda.dto.SugestaoCompraDTO;
+import com.bizuinfo.produto.dto.SugestaoCompraDTO;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;

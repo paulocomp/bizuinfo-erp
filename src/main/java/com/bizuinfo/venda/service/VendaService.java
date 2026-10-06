@@ -4,7 +4,7 @@ import com.bizuinfo.infra.service.EmailService;
 import com.bizuinfo.infra.util.JPAutil;
 import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.usuario.service.LogAuditoriaService;
+import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import com.bizuinfo.venda.model.ItemVenda;
 import com.bizuinfo.venda.model.Pagamento;
 import com.bizuinfo.venda.model.Venda;

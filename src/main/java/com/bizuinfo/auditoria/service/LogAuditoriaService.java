@@ -1,8 +1,8 @@
-package com.bizuinfo.usuario.service;
+package com.bizuinfo.auditoria.service;
 
 import com.bizuinfo.infra.util.RequestUtil;
-import com.bizuinfo.usuario.dao.LogAuditoriaDAO;
-import com.bizuinfo.usuario.model.LogAuditoria;
+import com.bizuinfo.auditoria.dao.LogAuditoriaDAO;
+import com.bizuinfo.auditoria.model.LogAuditoria;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 
