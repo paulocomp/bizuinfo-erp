@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>br.com.bizuinfo</groupId>
+        <artifactId>bizuinfo-erp</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>bizuinfo-web</artifactId>
+    <packaging>war</packaging>
+    <description>Aplicação web (WAR): telas .xhtml, beans @Named, filtros, servlets e configuração.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>br.com.bizuinfo</groupId>
+            <artifactId>bizuinfo-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>br.com.bizuinfo</groupId>
+            <artifactId>bizuinfo-auditoria</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>br.com.bizuinfo</groupId>
+            <artifactId>bizuinfo-usuario</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>br.com.bizuinfo</groupId>
+            <artifactId>bizuinfo-acesso</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>br.com.bizuinfo</groupId>
+            <artifactId>bizuinfo-produto</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>br.com.bizuinfo</groupId>
+            <artifactId>bizuinfo-venda</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <classifier>jakarta</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>bizuinfo.erp</finalName>
+    </build>
+
+</project>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+             https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+    <persistence-unit name="bizuinfo-pu" transaction-type="RESOURCE_LOCAL">
+
+        <!-- As entidades ficam em JARs separados (WEB-INF/lib), que o Hibernate
+             não varre sozinho: toda entidade nova precisa ser listada aqui. -->
+        <class>com.bizuinfo.auditoria.model.LogAuditoria</class>
+        <class>com.bizuinfo.produto.model.Categoria</class>
+        <class>com.bizuinfo.produto.model.Fornecedor</class>
+        <class>com.bizuinfo.produto.model.Produto</class>
+        <class>com.bizuinfo.usuario.model.Usuario</class>
+        <class>com.bizuinfo.venda.model.ItemVenda</class>
+        <class>com.bizuinfo.venda.model.Pagamento</class>
+        <class>com.bizuinfo.venda.model.Venda</class>
+
+        <properties>
+
+            <!-- MYSQL -->
+            <property name="jakarta.persistence.jdbc.driver"
+                      value="com.mysql.cj.jdbc.Driver"/>
+
+            <!-- LOCALHOST -->
+            <property name="jakarta.persistence.jdbc.url"
+                      value="jdbc:mysql://localhost:3306/bizuinfo_db?serverTimezone=UTC"/>
+
+            <property name="jakarta.persistence.jdbc.user"
+                      value="bizuinfo_user"/>
+
+            <property name="jakarta.persistence.jdbc.password"
+                      value="bizuinfo_pass"/>
+
+            <!-- HIBERNATE -->
+            <property name="hibernate.dialect"
+                      value="org.hibernate.dialect.MySQLDialect"/>
+
+            <property name="hibernate.hbm2ddl.auto"
+                      value="update"/>
+
+            <property name="hibernate.show_sql"
+                      value="true"/>
+
+            <property name="hibernate.format_sql"
+                      value="true"/>
+
+        </properties>
+
+    </persistence-unit>
+
+</persistence>

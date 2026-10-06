@@ -34,6 +34,47 @@ Projeto acadêmico voltado para simular um sistema ERP completo, com módulos ad
 
 ---
 
+## 🧱 Estrutura do projeto
+
+Maven multi-módulo, empacotado em um único WAR:
+
+| Módulo | O que tem |
+|---|---|
+| `bizuinfo-core` | DAO genérico, controle de transação (`@Transacional`), email, utilitários. Não conhece o domínio. |
+| `bizuinfo-auditoria` | Log de auditoria |
+| `bizuinfo-usuario` | Usuários, papéis e o contrato `UsuarioLogado` |
+| `bizuinfo-acesso` | Login, cadastro, confirmação de email, recuperação de acesso |
+| `bizuinfo-produto` | Produtos, categorias, fornecedores, estoque |
+| `bizuinfo-venda` | Vendas, pagamentos, recibo em PDF, sugestão de compra |
+| `bizuinfo-web` (WAR) | Telas `.xhtml`, beans `@Named`, filtros, servlets, `persistence.xml` |
+
+Dependências permitidas (um módulo só usa os que estão à esquerda):
+
+```
+core <- auditoria <- usuario <- acesso
+                     usuario <- produto <- venda
+web junta todos
+```
+
+Regras de camada:
+
+- **bean → service → DAO**. Bean de tela nunca acessa DAO.
+- **Regra de negócio fica no service.** Violação de regra é `RegraNegocioException`; o bean só mostra a mensagem.
+- **Service que acessa o banco é `@ApplicationScoped @Transacional`.** A transação vale para o método inteiro, inclusive chamadas a outros services; qualquer exceção desfaz tudo.
+- **Injeção sempre com `@Inject`** (não usamos EJB).
+- **Para saber quem está logado, injete `UsuarioLogado`**, não `LoginBean`/`SessaoBean`.
+- **Entidade nova precisa ser listada** em `bizuinfo-web/src/main/resources/META-INF/persistence.xml`.
+
+Para compilar tudo, na raiz:
+
+```bash
+mvn package
+```
+
+O WAR sai em `bizuinfo-web/target/bizuinfo.erp.war`.
+
+---
+
 ## 🚀 Como executar o projeto
 
 ### 📦 Pré-requisitos
@@ -46,6 +87,7 @@ Projeto acadêmico voltado para simular um sistema ERP completo, com módulos ad
 Na raiz do projeto (onde está o `docker-compose.deploy.yml`):
 
 ```bash
+mvn package
 docker build -t bizuinfoerp-app .
 docker compose -f docker-compose.deploy.yml up
 ```
