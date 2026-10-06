@@ -1,12 +1,13 @@
 package com.bizuinfo.venda.bean;
 
-import com.bizuinfo.produto.dao.ProdutoDAO;
+import com.bizuinfo.produto.service.ProdutoService;
 import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.venda.dto.ProdutoVendaDTO;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
+import jakarta.ejb.EJB;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
@@ -18,8 +19,8 @@ import java.util.stream.Collectors;
 @ViewScoped
 public class VendaBean implements Serializable {
 
-    @Inject
-    private ProdutoDAO produtoDAO;
+    @EJB
+    private ProdutoService produtoService;
 
     @Inject
     private CarrinhoBean carrinhoBean;
@@ -38,7 +39,7 @@ public class VendaBean implements Serializable {
 
     private void carregarProdutos() {
 
-        produtos = produtoDAO.listarTodos()
+        produtos = produtoService.listarTodos()
                 .stream()
                 .map(ProdutoVendaDTO::new)
                 .collect(Collectors.toList());

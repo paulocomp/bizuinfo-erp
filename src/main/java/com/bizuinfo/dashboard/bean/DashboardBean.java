@@ -1,11 +1,11 @@
 package com.bizuinfo.dashboard.bean;
 
 import com.bizuinfo.usuario.service.UsuarioLogado;
-import com.bizuinfo.usuario.model.Role;
-import com.bizuinfo.venda.dao.VendaDAO;
+import com.bizuinfo.venda.service.VendaService;
 import com.bizuinfo.venda.model.ItemVenda;
 import com.bizuinfo.venda.model.Venda;
 import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -22,8 +22,8 @@ import java.util.*;
 @ViewScoped
 public class DashboardBean implements Serializable {
 
-    @Inject
-    private VendaDAO vendaDAO;
+    @EJB
+    private VendaService vendaService;
 
     @Inject
     private UsuarioLogado usuarioLogado;
@@ -49,13 +49,7 @@ public class DashboardBean implements Serializable {
 
     private void carregarVendas() {
 
-        Long usuarioId = null;
-
-        if (usuarioLogado.getUsuarioLogado().getRole() == Role.FUNCIONARIO) {
-            usuarioId = usuarioLogado.getUsuarioLogado().getId();
-        }
-
-        vendas = vendaDAO.buscarVendasParaDashboard(usuarioId);
+        vendas = vendaService.listarParaDashboard(usuarioLogado.getUsuarioLogado());
     }
 
     private void calcularResumo() {

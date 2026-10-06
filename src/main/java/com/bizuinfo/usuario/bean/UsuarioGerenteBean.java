@@ -1,10 +1,9 @@
 package com.bizuinfo.usuario.bean;
 
-import com.bizuinfo.usuario.service.UsuarioLogado;
-import com.bizuinfo.usuario.dao.UsuarioDAO;
-import com.bizuinfo.usuario.model.Role;
+import com.bizuinfo.infra.exception.RegraNegocioException;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.auditoria.service.LogAuditoriaService;
+import com.bizuinfo.usuario.service.UsuarioLogado;
+import com.bizuinfo.usuario.service.UsuarioService;
 import jakarta.ejb.EJB;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -16,17 +15,13 @@ import org.primefaces.event.RowEditEvent;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
 public class UsuarioGerenteBean implements Serializable {
 
-    @Inject
-    private UsuarioDAO usuarioDAO;
-
     @EJB
-    private LogAuditoriaService logAuditoriaService;
+    private UsuarioService usuarioService;
 
     @Inject
     private UsuarioLogado usuarioLogado;
@@ -39,18 +34,11 @@ public class UsuarioGerenteBean implements Serializable {
 
         if (usuariosCache == null) {
             try {
-                usuariosCache = usuarioDAO.listarTodos()
-                        .stream()
-                        .filter(u -> u.getRole() != Role.ADMIN)
-                        .collect(Collectors.toList());
+                usuariosCache = usuarioService.listarGerenciaveisPor(usuarioLogado.getUsuarioLogado());
 
             } catch (Exception e) {
                 e.printStackTrace();
-                FacesContext.getCurrentInstance().addMessage(
-                        null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Erro ao carregar usuários", null)
-                );
+                mensagem(FacesMessage.SEVERITY_ERROR, "Erro ao carregar usuários");
                 usuariosCache = Collections.emptyList();
             }
         }
@@ -62,105 +50,29 @@ public class UsuarioGerenteBean implements Serializable {
 
         Usuario usuario = event.getObject();
 
+        if (usuario == null || usuario.getId() == null) return;
+
         try {
-            if (usuario == null || usuario.getId() == null) return;
+            boolean alterou = usuarioService.editar(usuario, usuarioLogado.getUsuarioLogado());
 
-            Usuario original = usuarioDAO.buscarPorId(usuario.getId())
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-            if (original.getRole() == Role.ADMIN) {
-                FacesContext.getCurrentInstance().addMessage(
-                        null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Gerente não pode editar ADMIN", null)
-                );
+            if (!alterou) {
+                mensagem(FacesMessage.SEVERITY_WARN, "Nenhuma alteração foi realizada");
                 return;
             }
-
-            if (usuario.getRole() == Role.ADMIN) {
-                FacesContext.getCurrentInstance().addMessage(
-                        null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Gerente não pode atribuir ADMIN", null)
-                );
-                return;
-            }
-
-            StringBuilder alteracoes = new StringBuilder();
-
-            if (!original.getNome().equals(usuario.getNome())) {
-                alteracoes.append("Nome: ")
-                        .append(original.getNome())
-                        .append(" -> ")
-                        .append(usuario.getNome())
-                        .append(" | ");
-                original.setNome(usuario.getNome());
-            }
-
-            if (!original.getEmail().equals(usuario.getEmail())) {
-                alteracoes.append("Email: ")
-                        .append(original.getEmail())
-                        .append(" -> ")
-                        .append(usuario.getEmail())
-                        .append(" | ");
-                original.setEmail(usuario.getEmail());
-            }
-
-            if (original.getRole() != usuario.getRole()) {
-                alteracoes.append("Role: ")
-                        .append(original.getRole())
-                        .append(" -> ")
-                        .append(usuario.getRole())
-                        .append(" | ");
-                original.setRole(usuario.getRole());
-            }
-
-            if (original.getEmailVerificado() != usuario.getEmailVerificado()) {
-                alteracoes.append("Status: ")
-                        .append(original.getEmailVerificado() ? "ATIVO" : "INATIVO")
-                        .append(" -> ")
-                        .append(usuario.getEmailVerificado() ? "ATIVO" : "INATIVO");
-                original.setEmailVerificado(usuario.getEmailVerificado());
-            }
-
-            if (alteracoes.isEmpty()) {
-                FacesContext.getCurrentInstance().addMessage(
-                        null,
-                        new FacesMessage(FacesMessage.SEVERITY_WARN,
-                                "Nenhuma alteração foi realizada", null)
-                );
-                return;
-            }
-
-            usuarioDAO.salvar(original);
-
-            logAuditoriaService.registrar(
-                    "EDITAR_USUARIO",
-                    alteracoes.toString(),
-                    usuarioLogado.getUsuarioLogado().getNome()
-            );
 
             usuariosCache = null;
 
-            FacesContext.getCurrentInstance().addMessage(
-                    null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "Usuário atualizado com sucesso", null)
-            );
+            mensagem(FacesMessage.SEVERITY_INFO, "Usuário atualizado com sucesso");
+
+        } catch (RegraNegocioException e) {
+            mensagem(FacesMessage.SEVERITY_ERROR, e.getMessage());
 
         } catch (Exception e) {
             e.printStackTrace();
-
-            FacesContext.getCurrentInstance().addMessage(
-                    null,
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_ERROR,
-                            "Erro ao salvar usuário: " + e.getMessage(),
-                            null
-                    )
-            );
+            mensagem(FacesMessage.SEVERITY_ERROR, "Erro ao salvar usuário: " + e.getMessage());
         }
     }
+
     public void prepararExclusao(Usuario usuario) {
         if (usuario != null) {
             idUsuarioSelecionado = usuario.getId();
@@ -169,58 +81,29 @@ public class UsuarioGerenteBean implements Serializable {
 
     public void excluirSelecionado() {
 
+        if (idUsuarioSelecionado == null) return;
+
         try {
-            if (idUsuarioSelecionado == null) return;
-
-            Usuario usuario = usuarioDAO.buscarPorId(idUsuarioSelecionado)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-            if (usuario.getRole() == Role.ADMIN) {
-                FacesContext.getCurrentInstance().addMessage(
-                        null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Gerente não pode excluir ADMIN", null)
-                );
-                return;
-            }
-
-            if (usuarioLogado.getUsuarioLogado().getId().equals(idUsuarioSelecionado)) {
-                FacesContext.getCurrentInstance().addMessage(
-                        null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Você não pode excluir seu próprio usuário", null)
-                );
-                return;
-            }
-
-            usuarioDAO.remover(idUsuarioSelecionado);
-
-            logAuditoriaService.registrar(
-                    "EXCLUIR_USUARIO",
-                    "Excluiu usuário ID: " + idUsuarioSelecionado,
-                    usuarioLogado.getUsuarioLogado().getNome()
-            );
+            usuarioService.excluir(idUsuarioSelecionado, usuarioLogado.getUsuarioLogado());
 
             idUsuarioSelecionado = null;
             usuariosCache = null;
 
-            FacesContext.getCurrentInstance().addMessage(
-                    null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "Usuário removido com sucesso", null)
-            );
+            mensagem(FacesMessage.SEVERITY_INFO, "Usuário removido com sucesso");
+
+        } catch (RegraNegocioException e) {
+            mensagem(FacesMessage.SEVERITY_ERROR, e.getMessage());
 
         } catch (Exception e) {
             e.printStackTrace();
-
-            FacesContext.getCurrentInstance().addMessage(
-                    null,
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_ERROR,
-                            "Erro ao excluir usuário: " + e.getMessage(),
-                            null
-                    )
-            );
+            mensagem(FacesMessage.SEVERITY_ERROR, "Erro ao excluir usuário: " + e.getMessage());
         }
+    }
+
+    private void mensagem(FacesMessage.Severity severidade, String texto) {
+        FacesContext.getCurrentInstance().addMessage(
+                null,
+                new FacesMessage(severidade, texto, null)
+        );
     }
 }

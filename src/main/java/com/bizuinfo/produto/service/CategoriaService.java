@@ -22,6 +22,10 @@ public class CategoriaService {
     @Inject
     private ProdutoDAO produtoDAO;
 
+    public List<Categoria> listarTodos() {
+        return categoriaDAO.listarTodos();
+    }
+
     public void atualizarNome(Long categoriaId, String novoNome) {
 
         Categoria categoria = categoriaDAO

@@ -6,11 +6,17 @@ import com.bizuinfo.auditoria.model.LogAuditoria;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 
+import java.util.List;
+
 @Stateless
 public class LogAuditoriaService {
 
     @Inject
     private LogAuditoriaDAO logAuditoriaDAO;
+
+    public List<LogAuditoria> listarTodos() {
+        return logAuditoriaDAO.listarTodos();
+    }
 
     /**
      * Registra uma ação no log de auditoria

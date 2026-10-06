@@ -5,6 +5,9 @@ import com.bizuinfo.infra.util.JPAutil;
 import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.auditoria.service.LogAuditoriaService;
+import com.bizuinfo.infra.exception.RegraNegocioException;
+import com.bizuinfo.usuario.model.Role;
+import com.bizuinfo.venda.dao.VendaDAO;
 import com.bizuinfo.venda.model.ItemVenda;
 import com.bizuinfo.venda.model.Pagamento;
 import com.bizuinfo.venda.model.Venda;
@@ -13,6 +16,7 @@ import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Stateless
@@ -24,7 +28,56 @@ public class VendaService {
     @Inject
     private EmailService emailService;
 
+    @Inject
+    private VendaDAO vendaDAO;
+
     private static final String EMAIL_GERENCIA = "bizuinfo.contato@gmail.com";
+
+    /**
+     * Gerente e admin veem todas as vendas; funcionário vê só as próprias.
+     */
+    private boolean podeVerTodas(Usuario usuario) {
+        return usuario.getRole().temPermissao(Role.GERENTE);
+    }
+
+    public List<Venda> listarVisiveisPara(Usuario usuario) {
+        return podeVerTodas(usuario)
+                ? vendaDAO.buscarTodas()
+                : vendaDAO.buscarPorUsuario(usuario.getId());
+    }
+
+    public List<Venda> listarPorPeriodoVisiveisPara(Usuario usuario,
+                                                    LocalDateTime inicio,
+                                                    LocalDateTime fim) {
+
+        List<Venda> vendas = vendaDAO.buscarPorPeriodo(inicio, fim);
+
+        if (podeVerTodas(usuario)) {
+            return vendas;
+        }
+
+        return vendas.stream()
+                .filter(v -> v.getUsuario().getId().equals(usuario.getId()))
+                .toList();
+    }
+
+    public List<Venda> listarParaDashboard(Usuario usuario) {
+        return vendaDAO.buscarVendasParaDashboard(
+                podeVerTodas(usuario) ? null : usuario.getId()
+        );
+    }
+
+    public Venda buscarReciboPara(Long vendaId, Usuario usuario) {
+
+        Venda venda = vendaDAO.buscarCompletamente(vendaId)
+                .orElseThrow(() -> new RegraNegocioException("Venda não encontrada"));
+
+        if (!podeVerTodas(usuario) && !venda.getUsuario().getId().equals(usuario.getId())) {
+            throw new RegraNegocioException("Acesso negado.");
+        }
+
+        return venda;
+    }
 
     public Venda finalizarVenda(
             Venda venda,

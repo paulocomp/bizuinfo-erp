@@ -1,7 +1,7 @@
 package com.bizuinfo.produto.bean;
 
 import com.bizuinfo.usuario.service.UsuarioLogado;
-import com.bizuinfo.produto.dao.ProdutoDAO;
+import com.bizuinfo.produto.service.ProdutoService;
 import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.produto.service.EstoqueService;
 import com.bizuinfo.produto.service.ProdutoFiltroService;
@@ -25,9 +25,6 @@ public class EstoqueBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private ProdutoDAO produtoDAO;
-
-    @Inject
     private UsuarioLogado usuarioLogado;
 
     @EJB
@@ -35,6 +32,9 @@ public class EstoqueBean implements Serializable {
 
     @EJB
     private EstoqueService estoqueService;
+
+    @EJB
+    private ProdutoService produtoService;
 
     private List<Produto> produtos;
     private List<Produto> produtosFiltrados;
@@ -49,7 +49,7 @@ public class EstoqueBean implements Serializable {
     }
 
     public void carregarProdutos() {
-        produtos = produtoDAO.listarTodos();
+        produtos = produtoService.listarTodos();
         produtosFiltrados = produtos;
     }
 
@@ -104,7 +104,7 @@ public class EstoqueBean implements Serializable {
 
         try {
 
-            produtoDAO.remover(produto.getId());
+            produtoService.remover(produto.getId());
 
             carregarProdutos();
             filtrar();

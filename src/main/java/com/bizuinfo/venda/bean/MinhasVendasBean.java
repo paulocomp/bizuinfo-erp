@@ -2,8 +2,7 @@ package com.bizuinfo.venda.bean;
 
 import com.bizuinfo.usuario.service.UsuarioLogado;
 import com.bizuinfo.usuario.model.Usuario;
-import com.bizuinfo.usuario.model.Role;
-import com.bizuinfo.venda.dao.VendaDAO;
+import com.bizuinfo.venda.service.VendaService;
 import com.bizuinfo.venda.model.Venda;
 import com.bizuinfo.venda.service.VendaPDFService;
 
@@ -32,8 +31,8 @@ public class MinhasVendasBean implements Serializable {
     @Inject
     private UsuarioLogado usuarioLogado;
 
-    @Inject
-    private VendaDAO vendaDAO;
+    @EJB
+    private VendaService vendaService;
 
     @EJB
     private VendaPDFService vendaPDFService;
@@ -50,18 +49,10 @@ public class MinhasVendasBean implements Serializable {
 
     public void carregar() {
 
-        Usuario usuario = usuarioLogado.getUsuarioLogado();
-
-        if (usuario.getRole().temPermissao(Role.GERENTE)) {
-            vendas = vendaDAO.buscarTodas();
-        } else {
-            vendas = vendaDAO.buscarPorUsuario(usuario.getId());
-        }
+        vendas = vendaService.listarVisiveisPara(usuarioLogado.getUsuarioLogado());
     }
 
     public void filtrar() {
-
-        Usuario usuario = usuarioLogado.getUsuarioLogado();
 
         if (dataInicial == null || dataFinal == null) {
             carregar();
@@ -71,15 +62,8 @@ public class MinhasVendasBean implements Serializable {
         LocalDateTime inicio = dataInicial.atStartOfDay();
         LocalDateTime fim = dataFinal.atTime(23, 59, 59);
 
-        List<Venda> base = vendaDAO.buscarPorPeriodo(inicio, fim);
-
-        if (!usuario.getRole().temPermissao(Role.GERENTE)) {
-            vendas = base.stream()
-                    .filter(v -> v.getUsuario().getId().equals(usuario.getId()))
-                    .toList();
-        } else {
-            vendas = base;
-        }
+        vendas = vendaService.listarPorPeriodoVisiveisPara(
+                usuarioLogado.getUsuarioLogado(), inicio, fim);
     }
 
     public void exportarPDF() {

@@ -3,6 +3,7 @@ package com.bizuinfo.acesso.service;
 import com.bizuinfo.acesso.dto.LoginResultado;
 import com.bizuinfo.acesso.model.ResultadoLogin;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
+import com.bizuinfo.usuario.model.Role;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import jakarta.ejb.Stateless;
@@ -19,6 +20,31 @@ public class LoginService {
 
     @Inject
     private LogAuditoriaService logAuditoriaService;
+
+    /**
+     * Login via Google: devolve o usuário com esse email e, se ainda não
+     * existir, cadastra um funcionário já com o email verificado.
+     */
+    public Usuario entrarComGoogle(String email, String nome) {
+
+        Optional<Usuario> opt = usuarioDAO.buscarPorEmail(email);
+
+        if (opt.isPresent()) {
+            return opt.get();
+        }
+
+        Usuario usuario = new Usuario();
+
+        usuario.setNome(nome);
+        usuario.setEmail(email);
+        usuario.setSenha("GOOGLE_LOGIN");
+        usuario.setRole(Role.FUNCIONARIO);
+        usuario.setEmailVerificado(true);
+
+        usuarioDAO.salvar(usuario);
+
+        return usuario;
+    }
 
     public LoginResultado autenticar(String email, String senha) {
 

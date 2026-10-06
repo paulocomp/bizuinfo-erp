@@ -1,6 +1,5 @@
 package com.bizuinfo.produto.bean;
 
-import com.bizuinfo.produto.dao.CategoriaDAO;
 import com.bizuinfo.produto.model.Categoria;
 import com.bizuinfo.produto.service.CategoriaService;
 import com.bizuinfo.produto.dto.SugestaoCompraDTO;
@@ -9,7 +8,6 @@ import jakarta.ejb.EJB;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import java.io.Serial;
@@ -22,9 +20,6 @@ public class CategoriaBean implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    @Inject
-    private CategoriaDAO categoriaDAO;
 
     @EJB
     private CategoriaService categoriaService;
@@ -40,7 +35,7 @@ public class CategoriaBean implements Serializable {
     }
 
     private void carregarCategorias() {
-        categorias = categoriaDAO.listarTodos();
+        categorias = categoriaService.listarTodos();
     }
 
     public void prepararEdicao(Categoria categoria) {

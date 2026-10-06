@@ -1,10 +1,9 @@
 package com.bizuinfo.acesso.google;
 
 import com.bizuinfo.acesso.bean.SessaoBean;
-import com.bizuinfo.usuario.dao.UsuarioDAO;
-import com.bizuinfo.usuario.model.Role;
+import com.bizuinfo.acesso.service.LoginService;
 import com.bizuinfo.usuario.model.Usuario;
-import jakarta.inject.Inject;
+import jakarta.ejb.EJB;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
@@ -20,15 +19,14 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @WebServlet("/google/callback")
 public class GoogleCallbackServlet extends HttpServlet {
 
-    @Inject
-    private UsuarioDAO usuarioDAO;
+    @EJB
+    private LoginService loginService;
 
     @Override
     protected void doGet(
@@ -114,28 +112,7 @@ public class GoogleCallbackServlet extends HttpServlet {
                     System.out.println("EMAIL = " + email);
                     System.out.println("NOME = " + nome);
 
-                    // Buscar usuário no banco
-                    Optional<Usuario> optUsuario = usuarioDAO.buscarPorEmail(email);
-
-                    Usuario usuario;
-
-                    if (optUsuario.isEmpty()) {
-
-                        usuario = new Usuario();
-
-                        usuario.setNome(nome);
-                        usuario.setEmail(email);
-
-                        usuario.setSenha("GOOGLE_LOGIN");
-                        usuario.setRole(Role.FUNCIONARIO);
-                        usuario.setEmailVerificado(true);
-                        usuarioDAO.salvar(usuario);
-
-                    } else {
-
-                        usuario = optUsuario.get();
-
-                    }
+                    Usuario usuario = loginService.entrarComGoogle(email, nome);
 
                     // LOGIN
                     HttpSession session = request.getSession(true);

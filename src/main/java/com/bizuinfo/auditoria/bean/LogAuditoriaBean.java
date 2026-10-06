@@ -1,10 +1,10 @@
 package com.bizuinfo.auditoria.bean;
 
-import com.bizuinfo.auditoria.dao.LogAuditoriaDAO;
+import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import com.bizuinfo.auditoria.model.LogAuditoria;
 import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
 import jakarta.faces.view.ViewScoped;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import java.io.Serializable;
@@ -14,14 +14,14 @@ import java.util.List;
 @ViewScoped
 public class LogAuditoriaBean implements Serializable {
 
-    @Inject
-    private LogAuditoriaDAO logAuditoriaDAO;
+    @EJB
+    private LogAuditoriaService logAuditoriaService;
 
     private List<LogAuditoria> logs;
 
     @PostConstruct
     public void init() {
-        logs = logAuditoriaDAO.listarTodos();
+        logs = logAuditoriaService.listarTodos();
     }
 
     public List<LogAuditoria> getLogs() {

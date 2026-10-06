@@ -1,11 +1,11 @@
 package com.bizuinfo.produto.bean;
 
-import com.bizuinfo.produto.dao.ProdutoDAO;
+import com.bizuinfo.produto.service.ProdutoService;
 import com.bizuinfo.produto.model.Produto;
 import com.bizuinfo.web.Paginas;
 import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
 import jakarta.faces.view.ViewScoped;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import java.io.Serial;
@@ -18,8 +18,8 @@ public class ProdutoBean implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Inject
-    private ProdutoDAO produtoDAO;
+    @EJB
+    private ProdutoService produtoService;
 
     private Produto produto;
 
@@ -31,7 +31,7 @@ public class ProdutoBean implements Serializable {
     private boolean salvo;
 
     public String salvar() {
-        produtoDAO.salvar(produto);
+        produtoService.salvar(produto);
         produto = new Produto();
         salvo = true;
 
