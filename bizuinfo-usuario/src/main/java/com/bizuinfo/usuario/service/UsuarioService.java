@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import com.bizuinfo.infra.exception.RegraNegocioException;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
+import com.bizuinfo.usuario.factory.UsuarioFactory;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.usuario.model.Role;
 import jakarta.inject.Inject;
@@ -20,6 +21,9 @@ public class UsuarioService {
     private UsuarioDAO uDAO;
 
     @Inject
+    private UsuarioFactory usuarioFactory;
+
+    @Inject
     private LogAuditoriaService logAuditoriaService;
 
     public boolean cadastrar(String nome, String email, String senha) {
@@ -28,11 +32,7 @@ public class UsuarioService {
             return false;
         }
 
-        Usuario usuario = new Usuario(
-            nome,
-            email,
-            BCrypt.hashpw(senha, BCrypt.gensalt())
-        );
+        Usuario usuario = usuarioFactory.criarFuncionario(nome, email, senha);
 
         uDAO.salvar(usuario);
 

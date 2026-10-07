@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import com.bizuinfo.acesso.dto.LoginResultado;
 import com.bizuinfo.acesso.model.ResultadoLogin;
 import com.bizuinfo.usuario.dao.UsuarioDAO;
-import com.bizuinfo.usuario.model.Role;
+import com.bizuinfo.usuario.factory.UsuarioFactory;
 import com.bizuinfo.usuario.model.Usuario;
 import com.bizuinfo.auditoria.service.LogAuditoriaService;
 import jakarta.inject.Inject;
@@ -19,6 +19,9 @@ public class LoginService {
 
     @Inject
     private UsuarioDAO usuarioDAO;
+
+    @Inject
+    private UsuarioFactory usuarioFactory;
 
     @Inject
     private LogAuditoriaService logAuditoriaService;
@@ -35,13 +38,7 @@ public class LoginService {
             return opt.get();
         }
 
-        Usuario usuario = new Usuario();
-
-        usuario.setNome(nome);
-        usuario.setEmail(email);
-        usuario.setSenha("GOOGLE_LOGIN");
-        usuario.setRole(Role.FUNCIONARIO);
-        usuario.setEmailVerificado(true);
+        Usuario usuario = usuarioFactory.criarFuncionarioGoogle(nome, email);
 
         usuarioDAO.salvar(usuario);
 

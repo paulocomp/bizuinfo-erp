@@ -38,19 +38,8 @@ public class Usuario {
     @Column(name = "token_reset")
     private String tokenReset;
 
-    // Construtor JPA
+    // Construtor JPA. Novos usuários devem ser criados via UsuarioFactory.
     public Usuario() {}
-
-    // Construtor cadastro
-    public Usuario(String nome, String email, String senha) {
-
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.emailVerificado = false;
-        this.role = Role.FUNCIONARIO;
-
-    }
 
     // Getters
     public Long getId() { return id; }
